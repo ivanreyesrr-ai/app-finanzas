@@ -87,6 +87,7 @@ export function projectRecurring(
         type: r.type,
         category_id: r.category_id,
         name: r.name,
+        recurring_id: r.id,
       });
     }
   }

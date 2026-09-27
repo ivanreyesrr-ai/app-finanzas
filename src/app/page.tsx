@@ -52,7 +52,7 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
         .returns<Pick<Category, "id" | "name" | "parent_id" | "sort" | "cycle_limit">[]>(),
       supabase
         .from("transactions")
-        .select("id, account_id, to_account_id, date, mes_imputacion, amount, type, category_id, name")
+        .select("id, account_id, to_account_id, date, mes_imputacion, amount, type, category_id, name, recurring_id")
         .eq("mes_imputacion", `${month}-01`)
         .returns<Transaction[]>(),
       supabase.from("recurring").select("*").eq("active", true).returns<Recurring[]>(),
@@ -244,7 +244,7 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
 
       {s.upcoming.length > 0 && (
         <section className="flex flex-col gap-3 px-5 pt-4 pb-2">
-          <h2 className="text-[17px] font-semibold">Próximos recurrentes</h2>
+          <h2 className="text-[17px] font-semibold">Pendientes del mes</h2>
           <div className="flex flex-col rounded-2xl bg-white px-4 py-1">
             {s.upcoming.map((p, i) => (
               <div
@@ -252,7 +252,7 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
                 className="flex items-center justify-between border-b border-line-soft py-3 last:border-b-0"
               >
                 <div className="flex flex-col gap-0.5">
-                  <div className="text-[15px]">{p.name}</div>
+                  <div className="text-[15px]">{p.name}{p.recurring && <span className="ml-1 text-muted" title="Recurrente">↻</span>}</div>
                   <div className="text-xs text-muted">{formatShortDate(p.date)}</div>
                 </div>
                 <div className="text-[15px] text-muted">{m(p.amount, "−")}</div>

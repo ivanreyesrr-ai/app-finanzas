@@ -59,7 +59,7 @@ export type MonthSummary = {
   transferencias: number; // neto: entra (+) o sale (−) de la cuenta diaria
   queda: number;
   categories: CategoryRow[];
-  upcoming: { name: string; date: string; amount: number }[];
+  upcoming: { name: string; date: string; amount: number; recurring: boolean }[];
 };
 
 // Movimientos del mes (por mes_imputacion). Resumen de la cuenta diaria (Santander)
@@ -95,7 +95,12 @@ export function summarizeMonth({
       else if (t.type === "gasto") {
         if (future) {
           pendientes += t.amount;
-          upcoming.push({ name: t.name || catName(t.category_id) || "", date: t.date, amount: t.amount });
+          upcoming.push({
+            name: t.name || catName(t.category_id) || "",
+            date: t.date,
+            amount: t.amount,
+            recurring: !!t.recurring_id,
+          });
         } else gastado += t.amount;
       } else if (t.type === "devolucion") {
         if (future) pendientes -= t.amount;

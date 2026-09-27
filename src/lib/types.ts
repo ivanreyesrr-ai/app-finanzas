@@ -36,4 +36,6 @@ export type Transaction = {
   type: TransactionType;
   category_id: string | null;
   name: string;
+  recurring_id?: string | null;
+  related_id?: string | null;
 };

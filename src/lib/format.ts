@@ -19,6 +19,14 @@ export function parseAmount(input: string): number | null {
   return n > 0 ? n : null;
 }
 
+// Como parseAmount pero admite negativos (ej. un saldo en descubierto). null si es 0.
+export function parseSignedAmount(input: string): number | null {
+  const s = input.replace(/[\s€]/g, "");
+  const negative = s.startsWith("-");
+  const n = parseAmount(negative ? s.slice(1) : s);
+  return n === null ? null : negative ? -n : n;
+}
+
 // Fecha de hoy en Barcelona como "YYYY-MM-DD", sin depender de la zona del servidor.
 export function todayISO() {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Madrid" }).format(
