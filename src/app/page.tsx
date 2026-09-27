@@ -108,7 +108,16 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col pb-32 tabular-nums">
       <header className="grid grid-cols-[44px_minmax(0,1fr)_44px] items-center px-3 pt-[max(env(safe-area-inset-top),16px)] pb-2">
-        <div />
+        <Link
+          href="/cuenta"
+          aria-label="Mi cuenta"
+          className="flex size-11 items-center justify-center rounded-full"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
+          </svg>
+        </Link>
         <div className="flex items-center justify-center gap-1">
           <Link
             href={`/?mes=${addMonths(month, -1)}`}

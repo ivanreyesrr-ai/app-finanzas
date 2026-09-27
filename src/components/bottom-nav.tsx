@@ -18,7 +18,7 @@ const icon = {
 const TABS = [
   {
     href: "/",
-    label: "Mes",
+    label: "Inicio",
     svg: (
       <svg {...icon}>
         <path d="M3 11l9-8 9 8" />

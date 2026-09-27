@@ -3,7 +3,6 @@ import { formatShortDate } from "@/lib/format";
 import { isHidden, money } from "@/lib/hidden";
 import type { Account, Category, Transaction } from "@/lib/types";
 import { BottomNav } from "@/components/bottom-nav";
-import { signOut } from "../actions";
 
 // Provisorio hasta que se diseñe la pantalla Movimientos: últimos 30 cargados.
 export default async function MovimientosPage() {
@@ -65,10 +64,6 @@ export default async function MovimientosPage() {
       ) : (
         <p className="text-muted">Todavía no cargaste movimientos.</p>
       )}
-
-      <form action={signOut}>
-        <button className="text-sm text-muted underline">Cerrar sesión</button>
-      </form>
 
       <BottomNav />
     </main>
