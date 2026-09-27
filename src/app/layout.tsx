@@ -21,6 +21,13 @@ const instrumentSerif = Instrument_Serif({
 export const metadata: Metadata = {
   title: "Finanzas",
   description: "App personal de finanzas",
+  // iPhone: al abrirla desde la pantalla de inicio, sin barras de Safari.
+  appleWebApp: {
+    capable: true,
+    title: "Finanzas",
+    statusBarStyle: "default",
+  },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
