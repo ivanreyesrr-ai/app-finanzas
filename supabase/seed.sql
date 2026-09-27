@@ -30,8 +30,8 @@ begin
   -- Categorías: (orden, nombre, tipo, subcategorías como "nombre" o "nombre|límite")
   for cat in
     select * from (values
-      (1,  'Vivienda',             'gasto',   array['Renta', 'Servicios', 'Hogar']),
-      (2,  'Comida',               'gasto',   array['Súper', 'Delivery', 'Bares y restaurantes']),
+      (1,  'Comida',               'gasto',   array['Súper', 'Delivery', 'Bares y restaurantes']),
+      (2,  'Vivienda',             'gasto',   array['Renta', 'Servicios', 'Hogar']),
       (3,  'Transporte',           'gasto',   array['Transporte público', 'Taxi/VTC', 'Coche']),
       (4,  'Suscripciones',        'gasto',   array['Apps y servicios digitales', 'Membresías']),
       (5,  'Salud y belleza',      'gasto',   array['Tratamiento capilar', 'Farmacia', 'Peluquería', 'Salud']),

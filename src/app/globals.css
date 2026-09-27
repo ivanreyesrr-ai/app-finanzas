@@ -5,6 +5,9 @@
   --foreground: #1a1a17;
   --accent: #1f5e4a;
   --muted: #5e5b53;
+  --line: #dad6cc;
+  --line-soft: #ece9e2;
+  --segment: #e9e6de;
 }
 
 @theme inline {
@@ -12,7 +15,11 @@
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
   --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-segment: var(--segment);
   --font-sans: var(--font-geist-sans);
+  --font-serif: var(--font-instrument-serif), Georgia, serif;
   --font-mono: var(--font-geist-mono);
 }
 
