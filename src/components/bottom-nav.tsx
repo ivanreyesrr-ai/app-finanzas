@@ -54,7 +54,7 @@ const TABS = [
     ),
   },
   {
-    href: null,
+    href: "/patrimonio",
     label: "Patrimonio",
     svg: (
       <svg {...icon}>
