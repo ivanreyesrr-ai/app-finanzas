@@ -2,13 +2,17 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { formatShortDate, todayISO } from "@/lib/format";
 import { isHidden, money } from "@/lib/hidden";
+import { mesImputacion } from "@/lib/flex";
+import { generarRecurrentes } from "@/lib/generate";
 import {
   addMonths,
   isMonth,
   monthLabel,
+  netForAccount,
   prevMonthName,
   summarizeMonth,
 } from "@/lib/month";
+import { projectRecurring, type Recurring } from "@/lib/recurring";
 import type { Account, Category, Transaction } from "@/lib/types";
 import { BottomNav } from "@/components/bottom-nav";
 import { EyeToggle } from "@/components/eye-toggle";
@@ -34,7 +38,9 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
   const m = (n: number, sign: "" | "+" | "−" = "") => money(n, hidden, sign);
 
   const supabase = await createClient();
-  const [{ data: accounts }, { data: categories }, { data: txs }] =
+  const genError = await generarRecurrentes(supabase);
+
+  const [{ data: accounts }, { data: categories }, { data: txs }, { data: recurring }] =
     await Promise.all([
       supabase
         .from("accounts")
@@ -42,13 +48,14 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
         .returns<Pick<Account, "id" | "name" | "currency" | "is_daily">[]>(),
       supabase
         .from("categories")
-        .select("id, name, parent_id, sort")
-        .returns<Pick<Category, "id" | "name" | "parent_id" | "sort">[]>(),
+        .select("id, name, parent_id, sort, cycle_limit")
+        .returns<Pick<Category, "id" | "name" | "parent_id" | "sort" | "cycle_limit">[]>(),
       supabase
         .from("transactions")
         .select("id, account_id, to_account_id, date, mes_imputacion, amount, type, category_id, name")
         .eq("mes_imputacion", `${month}-01`)
         .returns<Transaction[]>(),
+      supabase.from("recurring").select("*").eq("active", true).returns<Recurring[]>(),
     ]);
 
   const daily = accounts?.find((a) => a.is_daily);
@@ -58,10 +65,33 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
         p_mes: `${month}-01`,
       })
     : { data: 0, error: null };
-  const saldoAnterior = Number(saldo ?? 0);
+
+  // Meses futuros: los recurrentes todavía no generados se proyectan (sin guardarse).
+  // Los que caen en meses intermedios ajustan el saldo anterior.
+  const currentMonth = today.slice(0, 7);
+  const futureMonths: string[] = [];
+  for (let mm = addMonths(currentMonth, 1); mm <= month; mm = addMonths(mm, 1))
+    futureMonths.push(mm);
+  const flexIds = new Set(
+    categories?.filter((c) => c.cycle_limit !== null).map((c) => c.id),
+  );
+  const projected = projectRecurring(
+    (recurring ?? []).map((r) => ({ ...r, amount: Number(r.amount) })),
+    futureMonths,
+    (t) => mesImputacion(t.date, !!t.category_id && flexIds.has(t.category_id)),
+  );
+  const saldoAnterior =
+    Number(saldo ?? 0) +
+    netForAccount(
+      projected.filter((t) => t.mes_imputacion < `${month}-01`),
+      daily?.id ?? "",
+    );
 
   const s = summarizeMonth({
-    txs: (txs ?? []).map((t) => ({ ...t, amount: Number(t.amount) })),
+    txs: [
+      ...(txs ?? []).map((t) => ({ ...t, amount: Number(t.amount) })),
+      ...projected.filter((t) => t.mes_imputacion === `${month}-01`),
+    ],
     accounts: accounts ?? [],
     categories: categories ?? [],
     dailyId: daily?.id ?? "",
@@ -108,6 +138,13 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
         </div>
         <EyeToggle hidden={hidden} />
       </header>
+
+      {genError && (
+        <p role="alert" className="mx-5 mb-2 rounded-xl bg-red-50 p-3 text-sm text-red-800">
+          No se pudieron generar los recurrentes del mes. ¿Aplicaste la migración
+          20260927000005_generar_recurrentes.sql? ({genError.message})
+        </p>
+      )}
 
       {saldoError && (
         <p role="alert" className="mx-5 mb-2 rounded-xl bg-red-50 p-3 text-sm text-red-800">

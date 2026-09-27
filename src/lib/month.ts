@@ -29,6 +29,19 @@ export function prevMonthName(month: string) {
   );
 }
 
+// Efecto neto de unos movimientos sobre el saldo de una cuenta.
+export function netForAccount(txs: Transaction[], accountId: string) {
+  let net = 0;
+  for (const t of txs) {
+    if (t.account_id === accountId) {
+      net += ["ingreso", "devolucion", "saldo_inicial"].includes(t.type) ? t.amount : -t.amount;
+    } else if (t.to_account_id === accountId && t.type === "transferencia") {
+      net += t.amount;
+    }
+  }
+  return net;
+}
+
 // ─── Resumen del mes ────────────────────────────────────────────────────────
 
 export type CategoryRow = {

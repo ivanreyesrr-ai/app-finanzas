@@ -42,7 +42,7 @@ const TABS = [
   },
   null, // botón +
   {
-    href: null,
+    href: "/recurrentes",
     label: "Recurrentes",
     svg: (
       <svg {...icon}>
@@ -99,12 +99,14 @@ export function BottomNav() {
                 {content}
               </span>
             );
+          const active =
+            tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
           return (
             <Link
               key={i}
               href={tab.href}
-              aria-current={pathname === tab.href ? "page" : undefined}
-              className={`${cls} ${pathname === tab.href ? "text-accent" : "text-muted"}`}
+              aria-current={active ? "page" : undefined}
+              className={`${cls} ${active ? "text-accent" : "text-muted"}`}
             >
               {content}
             </Link>

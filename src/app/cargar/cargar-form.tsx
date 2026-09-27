@@ -5,6 +5,7 @@ import { useActionState, useMemo, useState } from "react";
 import { flexCycle } from "@/lib/flex";
 import { formatEUR, formatShortDate } from "@/lib/format";
 import type { Account, Category } from "@/lib/types";
+import { Chip } from "@/components/chip";
 import { createTransaction } from "./actions";
 
 export type FlexMovement = {
@@ -25,31 +26,6 @@ const TIPOS: { value: Tipo; label: string }[] = [
 const label = "text-[13px] text-muted";
 const rowSelect =
   "absolute inset-0 w-full cursor-pointer opacity-0"; // control nativo invisible sobre la fila
-
-function Chip({
-  on,
-  onClick,
-  children,
-}: {
-  on: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      aria-pressed={on}
-      onClick={onClick}
-      className={`h-9 rounded-full border px-3.5 text-sm ${
-        on
-          ? "border-foreground bg-foreground text-white"
-          : "border-line bg-white text-foreground"
-      }`}
-    >
-      {children}
-    </button>
-  );
-}
 
 export function CargarForm({
   accounts,
