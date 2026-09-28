@@ -13,7 +13,7 @@ import { isISODate, validateMovement } from "@/lib/validate-movement";
 
 export type RecurringState = { error: string } | null;
 
-const FREQUENCIES: Frequency[] = ["mensual", "bimestral", "anual"];
+const FREQUENCIES: Frequency[] = ["mensual", "bimestral", "trimestral", "anual"];
 
 type Supabase = Awaited<ReturnType<typeof createClient>>;
 

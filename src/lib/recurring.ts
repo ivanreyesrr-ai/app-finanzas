@@ -1,7 +1,7 @@
 import { addMonths } from "./month";
 import type { Transaction } from "./types";
 
-export type Frequency = "mensual" | "bimestral" | "anual";
+export type Frequency = "mensual" | "bimestral" | "trimestral" | "anual";
 
 export type Recurring = {
   id: string;
@@ -30,6 +30,7 @@ export function fechaRecurrente(
   const diff = y * 12 + m - (sy * 12 + sm);
   if (diff < 0) return null;
   if (r.frequency === "bimestral" && diff % 2 !== 0) return null;
+  if (r.frequency === "trimestral" && diff % 3 !== 0) return null;
   if (r.frequency === "anual" && diff % 12 !== 0) return null;
   const lastDay = new Date(Date.UTC(y, m, 0)).getUTCDate();
   const d = `${month}-${String(Math.min(r.day_of_month, lastDay)).padStart(2, "0")}`;
@@ -94,9 +95,9 @@ export function projectRecurring(
   return out;
 }
 
-// Comprometido por mes: mensuales + bimestrales/2 + anuales/12 (solo gastos activos).
+// Comprometido por mes: mensuales + bimestrales/2 + trimestrales/3 + anuales/12 (solo gastos activos).
 export function monthlyCommitment(recurring: Recurring[]) {
-  const factor: Record<Frequency, number> = { mensual: 1, bimestral: 1 / 2, anual: 1 / 12 };
+  const factor: Record<Frequency, number> = { mensual: 1, bimestral: 1 / 2, trimestral: 1 / 3, anual: 1 / 12 };
   return recurring
     .filter((r) => r.active && r.type === "gasto")
     .reduce((s, r) => s + r.amount * factor[r.frequency], 0);

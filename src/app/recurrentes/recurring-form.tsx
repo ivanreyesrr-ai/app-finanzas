@@ -23,6 +23,7 @@ const TIPOS: { value: Tipo; label: string }[] = [
 const FRECUENCIAS: { value: Frequency; label: string }[] = [
   { value: "mensual", label: "Mensual" },
   { value: "bimestral", label: "Bimestral" },
+  { value: "trimestral", label: "Trimestral" },
   { value: "anual", label: "Anual" },
 ];
 
@@ -46,7 +47,8 @@ function Segmented<T extends string>({
     <div
       role="radiogroup"
       aria-label={aria}
-      className="grid grid-cols-3 gap-1 rounded-xl bg-segment p-1"
+      style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
+      className="grid gap-1 rounded-xl bg-segment p-1"
     >
       {options.map((o) => (
         <button
@@ -70,6 +72,7 @@ function scheduleText(freq: Frequency, start: string) {
   const day = Number(start.slice(8, 10));
   if (freq === "mensual") return `Todos los meses, el día ${day}`;
   if (freq === "bimestral") return `Cada 2 meses, el día ${day}, desde ${formatShortDate(start)}`;
+  if (freq === "trimestral") return `Cada 3 meses, el día ${day}, desde ${formatShortDate(start)}`;
   return `Todos los años, el ${formatShortDate(start)}`;
 }
 

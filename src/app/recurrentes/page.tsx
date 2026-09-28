@@ -15,6 +15,7 @@ import { BottomNav } from "@/components/bottom-nav";
 const GROUPS: { freq: Frequency; title: string }[] = [
   { freq: "mensual", title: "Mensuales" },
   { freq: "bimestral", title: "Bimestrales" },
+  { freq: "trimestral", title: "Trimestrales" },
   { freq: "anual", title: "Anuales" },
 ];
 
