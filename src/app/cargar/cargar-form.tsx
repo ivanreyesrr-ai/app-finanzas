@@ -25,7 +25,7 @@ const TIPOS: { value: Tipo; label: string }[] = [
 ];
 
 const TITLES: Partial<Record<TransactionType, string>> = {
-  saldo_inicial: "Saldo inicial",
+  saldo_inicial: "Ajuste de saldo",
   devolucion: "Devolución",
 };
 

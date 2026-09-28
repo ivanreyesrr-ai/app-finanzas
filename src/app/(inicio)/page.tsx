@@ -181,6 +181,19 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
       </section>
 
       <section className="mx-5 grid grid-cols-2 gap-3.5 rounded-2xl bg-white p-4">
+        <div className="col-span-2 flex items-baseline justify-between border-b border-line-soft pb-3">
+          <div className="flex flex-col gap-0.5">
+            <div className="text-[15px] font-medium">Resultado del mes</div>
+            <div className="text-xs text-muted">
+              Ingresos − gastos{s.pendientes > 0 ? ", con los pendientes" : ""}
+            </div>
+          </div>
+          <div
+            className={`text-[20px] font-semibold ${s.resultado < 0 ? "text-red-700" : "text-accent"}`}
+          >
+            {m(Math.abs(s.resultado), s.resultado < 0 ? "−" : "+")}
+          </div>
+        </div>
         <Stat label={`Saldo de ${prevMonthName(month)}`} value={m(saldoAnterior)} />
         <Stat label="Ingresos" value={m(s.ingresos, "+")} className="text-accent" />
         <Stat
@@ -196,6 +209,13 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
           <Stat
             label="Transferencias"
             value={m(Math.abs(s.transferencias), s.transferencias > 0 ? "+" : "−")}
+          />
+        )}
+        {s.ajustes !== 0 && (
+          <Stat
+            label="Ajustes de saldo"
+            value={m(Math.abs(s.ajustes), s.ajustes > 0 ? "+" : "−")}
+            className="text-muted"
           />
         )}
       </section>

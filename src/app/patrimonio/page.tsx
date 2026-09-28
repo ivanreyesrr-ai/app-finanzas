@@ -17,7 +17,7 @@ export default async function PatrimonioPage() {
   const supabase = await createClient();
   const hidden = await isHidden();
 
-  const [{ data: accounts }, { data: saldos, error }, fx, { count: saldosIniciales }] =
+  const [{ data: accounts }, { data: saldos, error }, fx] =
     await Promise.all([
       supabase
         .from("accounts")
@@ -26,12 +26,7 @@ export default async function PatrimonioPage() {
         .returns<Account[]>(),
       supabase.rpc("saldos_cuentas", { p_hoy: todayISO() }),
       usdToEur(),
-      supabase
-        .from("transactions")
-        .select("id", { count: "exact", head: true })
-        .eq("type", "saldo_inicial"),
     ]);
-  const daily = accounts?.find((a) => a.is_daily);
 
   const { rows, total, missingFx } = buildPatrimonio(
     accounts ?? [],
@@ -112,19 +107,6 @@ export default async function PatrimonioPage() {
             </div>
           ))}
         </div>
-        {daily && !saldosIniciales && (
-          <div className="flex items-center justify-between gap-3 rounded-2xl bg-white p-4">
-            <div className="text-[13px] text-muted">
-              {daily.name} todavía no tiene saldo inicial: su saldo es solo lo que cargaste.
-            </div>
-            <Link
-              href="/patrimonio/saldo-inicial"
-              className="flex h-11 shrink-0 items-center rounded-xl bg-accent px-3.5 text-sm text-white"
-            >
-              Cargar saldo inicial
-            </Link>
-          </div>
-        )}
         <div className="flex items-center justify-between gap-3 px-1">
           <div className="text-[13px] text-muted">
             Santander sale de los movimientos; el resto se actualiza a mano

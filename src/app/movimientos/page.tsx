@@ -81,7 +81,7 @@ export default async function MovimientosPage({
     const title =
       t.name ||
       cat?.name ||
-      (t.type === "transferencia" ? "Transferencia" : t.type === "saldo_inicial" ? "Saldo inicial" : "");
+      (t.type === "transferencia" ? "Transferencia" : t.type === "saldo_inicial" ? "Ajuste de saldo" : "");
     const detail =
       t.type === "transferencia"
         ? `${accountName.get(t.account_id)} → ${accountName.get(t.to_account_id ?? "")}`

@@ -57,6 +57,8 @@ export type MonthSummary = {
   gastado: number;
   pendientes: number;
   transferencias: number; // neto: entra (+) o sale (−) de la cuenta diaria
+  ajustes: number; // ajustes de saldo del mes (tipo saldo_inicial), con signo
+  resultado: number; // ingresos − gastos del mes (sin transferencias ni ajustes)
   queda: number;
   categories: CategoryRow[];
   upcoming: { name: string; date: string; amount: number; recurring: boolean }[];
@@ -83,6 +85,7 @@ export function summarizeMonth({
   let gastado = 0;
   let pendientes = 0;
   let transferencias = 0;
+  let ajustes = 0;
   const upcoming: MonthSummary["upcoming"] = [];
 
   const catById = new Map(categories.map((c) => [c.id, c]));
@@ -106,8 +109,8 @@ export function summarizeMonth({
         if (future) pendientes -= t.amount;
         else gastado -= t.amount;
       } else if (t.type === "transferencia") transferencias -= t.amount;
-      // saldo_inicial dentro del mes: se trata como entrada
-      else if (t.type === "saldo_inicial") ingresos += t.amount;
+      // Ajustes de saldo: suman o restan al saldo, pero no son ingreso ni gasto.
+      else if (t.type === "saldo_inicial") ajustes += t.amount;
     } else if (t.to_account_id === dailyId && t.type === "transferencia") {
       transferencias += t.amount;
     }
@@ -139,7 +142,9 @@ export function summarizeMonth({
     gastado,
     pendientes,
     transferencias,
-    queda: saldoAnterior + ingresos - gastado - pendientes + transferencias,
+    ajustes,
+    resultado: ingresos - gastado - pendientes,
+    queda: saldoAnterior + ingresos - gastado - pendientes + transferencias + ajustes,
     categories: [...rows.values()]
       .filter((r) => r.paid + r.pending > 0.004)
       .sort((a, b) => b.paid + b.pending - (a.paid + a.pending)),
