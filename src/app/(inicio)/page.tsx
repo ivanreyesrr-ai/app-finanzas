@@ -11,6 +11,7 @@ import {
   summarizeMonth,
 } from "@/lib/month";
 import { projectRecurring, type Recurring } from "@/lib/recurring";
+import { lastDay } from "@/lib/evolucion";
 import type { Account, Category, Transaction } from "@/lib/types";
 import { BottomNav } from "@/components/bottom-nav";
 import { EyeToggle } from "@/components/eye-toggle";
@@ -90,6 +91,9 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
 
   const isCurrent = month === today.slice(0, 7);
   const isPast = month < today.slice(0, 7);
+  // Gasto diario disponible: resultado del mes (ingresos − gastos − pendientes)
+  // repartido entre los días que quedan, hoy incluido.
+  const diasRestantes = Number(lastDay(month).slice(8, 10)) - Number(today.slice(8, 10)) + 1;
   const maxCat = Math.max(...s.categories.map((c) => c.paid + c.pending), 1);
   const totalCat = s.categories.reduce((sum, c) => sum + c.paid + c.pending, 0);
   const pct = (n: number) => `${Math.max(0, (n / maxCat) * 100).toFixed(2)}%`;
@@ -143,6 +147,24 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
               ? " · ya descontados los recurrentes pendientes"
               : ` · ya descontados ${m(s.pendientes)} de recurrentes pendientes`)}
         </div>
+        {isCurrent && (
+          <div className="mt-2 border-t-[0.5px] border-line pt-2.5 text-[15px]">
+            {s.resultado >= 0 ? (
+              <>
+                <span className="font-semibold">≈ {m(s.resultado / diasRestantes)}/día</span>
+                <span className="text-muted">
+                  {" "}
+                  durante {diasRestantes} {diasRestantes === 1 ? "día" : "días"} para cerrar el mes en cero
+                </span>
+              </>
+            ) : (
+              <span className="text-negative">
+                Este mes ya gastaste más de lo que entra
+                {!hidden && ` (${m(Math.abs(s.resultado), "−")})`}
+              </span>
+            )}
+          </div>
+        )}
       </section>
 
       <SectionTitle>Resumen</SectionTitle>
