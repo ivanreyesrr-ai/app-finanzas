@@ -1,56 +1,46 @@
 "use client";
 
-import Link from "next/link";
 import { useActionState } from "react";
+import { groupRow, SheetHeader } from "@/components/ios";
 import { changePassword } from "../actions";
 
-const input =
-  "h-12 w-full rounded-xl border border-line bg-card px-3.5 text-base outline-none focus:border-accent";
+const input = "min-w-0 grow bg-transparent py-2.5 text-[17px] outline-none placeholder:text-muted/60";
 
 export default function ContrasenaPage() {
   const [state, formAction, pending] = useActionState(changePassword, null);
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col">
-      <header className="grid grid-cols-[44px_minmax(0,1fr)_44px] items-center px-3 pt-[max(env(safe-area-inset-top),16px)] pb-2">
-        <Link href="/cuenta" aria-label="Volver" className="flex size-11 items-center justify-center">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </Link>
-        <h1 className="text-center text-[17px] font-semibold">Cambiar contraseña</h1>
-        <div />
-      </header>
+    <form action={formAction} className="mx-auto flex w-full max-w-md flex-1 flex-col">
+      <SheetHeader title="Contraseña" cancelHref="/cuenta" saving={pending} />
 
-      <form action={formAction} className="flex flex-col gap-3 px-5 pt-4">
-        <label htmlFor="current" className="text-[13px] text-muted">
-          Contraseña actual
-        </label>
-        <input id="current" name="current" type="password" autoComplete="current-password" required className={input} />
-
-        <label htmlFor="next" className="mt-2 text-[13px] text-muted">
-          Nueva contraseña (mínimo 8 caracteres)
-        </label>
-        <input id="next" name="next" type="password" autoComplete="new-password" minLength={8} required className={input} />
-
-        <label htmlFor="repeat" className="text-[13px] text-muted">
-          Repetir nueva contraseña
-        </label>
-        <input id="repeat" name="repeat" type="password" autoComplete="new-password" minLength={8} required className={input} />
+      <div className="flex flex-col gap-1.5 px-4 pt-4">
+        <div className="flex flex-col rounded-[10px] bg-card pl-4">
+          <div className={groupRow}>
+            <label htmlFor="current" className="w-24 shrink-0 text-[17px]">
+              Actual
+            </label>
+            <input id="current" name="current" type="password" autoComplete="current-password" required placeholder="Obligatoria" className={input} />
+          </div>
+          <div className={groupRow}>
+            <label htmlFor="next" className="w-24 shrink-0 text-[17px]">
+              Nueva
+            </label>
+            <input id="next" name="next" type="password" autoComplete="new-password" minLength={8} required placeholder="Mínimo 8 caracteres" className={input} />
+          </div>
+          <div className={groupRow}>
+            <label htmlFor="repeat" className="w-24 shrink-0 text-[17px]">
+              Repetir
+            </label>
+            <input id="repeat" name="repeat" type="password" autoComplete="new-password" minLength={8} required placeholder="Otra vez la nueva" className={input} />
+          </div>
+        </div>
 
         {state?.error && (
-          <p role="alert" className="text-sm text-negative">
+          <p role="alert" className="mx-4 mt-2 text-[15px] text-negative">
             {state.error}
           </p>
         )}
-
-        <button
-          disabled={pending}
-          className="mt-3 h-[52px] w-full rounded-[14px] bg-accent text-base font-semibold text-on-accent disabled:opacity-50"
-        >
-          {pending ? "Guardando…" : "Cambiar contraseña"}
-        </button>
-      </form>
-    </main>
+      </div>
+    </form>
   );
 }

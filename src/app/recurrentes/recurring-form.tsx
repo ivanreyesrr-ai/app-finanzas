@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useActionState, useState } from "react";
 import { formatShortDate } from "@/lib/format";
 import type { Frequency, Recurring } from "@/lib/recurring";
 import type { Account, Category } from "@/lib/types";
 import { Chip } from "@/components/chip";
+import { Group, groupRow, SectionLabel, Segmented, SheetHeader } from "@/components/ios";
 import {
   deleteRecurring,
   saveRecurring,
@@ -27,46 +27,16 @@ const FRECUENCIAS: { value: Frequency; label: string }[] = [
   { value: "anual", label: "Anual" },
 ];
 
-const label = "text-[13px] text-muted";
 const rowSelect = "absolute inset-0 w-full cursor-pointer opacity-0";
 const row =
-  "relative flex h-12 items-center justify-between border-b border-line-soft last:border-b-0";
+  "relative flex min-h-11 items-center justify-between gap-3 border-b-[0.5px] border-line pr-4 text-[17px] last:border-b-0";
 
-function Segmented<T extends string>({
-  label: aria,
-  options,
-  value,
-  onChange,
-}: {
-  label: string;
-  options: { value: T; label: string }[];
-  value: T;
-  onChange: (v: T) => void;
-}) {
-  return (
-    <div
-      role="radiogroup"
-      aria-label={aria}
-      style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
-      className="grid gap-1 rounded-xl bg-segment p-1"
-    >
-      {options.map((o) => (
-        <button
-          key={o.value}
-          type="button"
-          role="radio"
-          aria-checked={value === o.value}
-          onClick={() => onChange(o.value)}
-          className={`h-10 rounded-[9px] text-sm ${
-            value === o.value ? "bg-segment-on font-semibold text-foreground shadow-sm" : "text-muted"
-          }`}
-        >
-          {o.label}
-        </button>
-      ))}
-    </div>
-  );
-}
+const updown = (
+  <svg width="11" height="16" viewBox="0 0 11 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60" aria-hidden="true">
+    <polyline points="3 5 5.5 2.5 8 5" />
+    <polyline points="3 11 5.5 13.5 8 11" />
+  </svg>
+);
 
 function scheduleText(freq: Frequency, start: string) {
   const day = Number(start.slice(8, 10));
@@ -121,30 +91,19 @@ export function RecurringForm({
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col tabular-nums">
-      <header className="flex items-center justify-between px-3 pt-[max(env(safe-area-inset-top),16px)]">
-        <Link
-          href="/recurrentes"
-          aria-label="Cerrar"
-          className="flex size-11 items-center justify-center"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <line x1="6" y1="6" x2="18" y2="18" />
-            <line x1="18" y1="6" x2="6" y2="18" />
-          </svg>
-        </Link>
-        <h1 className="text-[17px] font-semibold">
-          {initial ? "Editar recurrente" : "Nuevo recurrente"}
-        </h1>
-        <div className="size-11" />
-      </header>
-
-      <form action={formAction} className="flex flex-1 flex-col">
+      <form action={formAction} className="flex flex-col">
         <input type="hidden" name="id" value={initial?.id ?? ""} />
         <input type="hidden" name="type" value={tipo} />
         <input type="hidden" name="category_id" value={categoryId ?? ""} />
         <input type="hidden" name="frequency" value={frequency} />
 
-        <div className="flex flex-col gap-5 px-5 pt-4">
+        <SheetHeader
+          title={initial ? "Editar recurrente" : "Nuevo recurrente"}
+          cancelHref="/recurrentes"
+          saving={pending}
+        />
+
+        <div className="flex flex-col gap-[18px] px-4 pt-2 pb-6">
           <Segmented
             label="Tipo"
             options={TIPOS}
@@ -156,11 +115,8 @@ export function RecurringForm({
             }}
           />
 
-          <div className="flex flex-col items-center gap-1 py-2">
-            <label htmlFor="amount" className={label}>
-              Importe
-            </label>
-            <div className="flex items-baseline justify-center font-serif text-[60px] leading-tight">
+          <div className="flex flex-col items-center gap-0.5 pt-1.5 pb-0.5">
+            <div className="flex items-baseline justify-center font-serif text-[64px] leading-[1.05]">
               <input
                 id="amount"
                 name="amount"
@@ -175,26 +131,31 @@ export function RecurringForm({
               />
               <span className="ml-2">€</span>
             </div>
+            <label htmlFor="amount" className="text-[13px] text-muted">
+              Importe
+            </label>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="name" className={label}>
-              Nombre
-            </label>
-            <input
-              id="name"
-              name="name"
-              autoComplete="off"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Ej. Alquiler, Digi, Salario"
-              className="h-12 rounded-xl border border-line bg-card px-3.5 text-base outline-none focus:border-accent"
-            />
+          <div className="rounded-[10px] bg-card pl-4">
+            <div className={row}>
+              <label htmlFor="name" className="w-24 shrink-0">
+                Nombre
+              </label>
+              <input
+                id="name"
+                name="name"
+                autoComplete="off"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Ej. Alquiler, Digi"
+                className="min-w-0 grow bg-transparent py-2.5 outline-none placeholder:text-muted/60"
+              />
+            </div>
           </div>
 
           {tipo === "gasto" && (
             <div className="flex flex-col gap-2">
-              <div className={label}>Categoría</div>
+              <SectionLabel>Categoría</SectionLabel>
               <div className="flex flex-wrap gap-2">
                 {parents.map((c) => (
                   <Chip
@@ -214,7 +175,7 @@ export function RecurringForm({
 
           {tipo !== "transferencia" && subs.length > 0 && (
             <div className="flex flex-col gap-2">
-              <div className={label}>{tipo === "ingreso" ? "Categoría" : "Subcategoría"}</div>
+              <SectionLabel>{tipo === "ingreso" ? "Categoría" : "Subcategoría"}</SectionLabel>
               <div className="flex flex-wrap gap-2">
                 {subs.map((c) => (
                   <Chip key={c.id} on={subId === c.id} onClick={() => setSubId(c.id)}>
@@ -226,22 +187,22 @@ export function RecurringForm({
           )}
 
           <div className="flex flex-col gap-2">
-            <div className={label}>Frecuencia</div>
+            <SectionLabel>Frecuencia</SectionLabel>
             <Segmented
               label="Frecuencia"
               options={FRECUENCIAS}
               value={frequency}
               onChange={setFrequency}
             />
-            <p className="text-sm text-muted">{scheduleText(frequency, startDate)}</p>
+            <p className="ml-4 text-[13px] text-muted">{scheduleText(frequency, startDate)}</p>
           </div>
 
-          <div className="flex flex-col rounded-2xl bg-card px-4">
+          <div className="flex flex-col rounded-[10px] bg-card pl-4">
             <div className={row}>
-              <label htmlFor="start_date" className="text-[15px]">
-                Primera fecha
-              </label>
-              <span className="text-[15px] text-muted">{formatShortDate(startDate)} {startDate.slice(0, 4)}</span>
+              <label htmlFor="start_date">Primera fecha</label>
+              <span className="rounded-[7px] bg-fill px-2.5 py-1 text-accent">
+                {formatShortDate(startDate)} {startDate.slice(0, 4)}
+              </span>
               <input
                 id="start_date"
                 name="start_date"
@@ -254,10 +215,8 @@ export function RecurringForm({
             </div>
 
             <div className={row}>
-              <label htmlFor="end_date" className="text-[15px]">
-                Termina
-              </label>
-              <span className="text-[15px] text-muted">
+              <label htmlFor="end_date">Termina</label>
+              <span className="rounded-[7px] bg-fill px-2.5 py-1 text-accent">
                 {endDate ? `${formatShortDate(endDate)} ${endDate.slice(0, 4)}` : "Nunca"}
               </span>
               <input
@@ -272,10 +231,11 @@ export function RecurringForm({
             </div>
 
             <div className={row}>
-              <label htmlFor="account_id" className="text-[15px]">
-                {tipo === "transferencia" ? "Desde" : "Cuenta"}
-              </label>
-              <span className="text-[15px] text-muted">{accountName(accountId)}</span>
+              <label htmlFor="account_id">{tipo === "transferencia" ? "Desde" : "Cuenta"}</label>
+              <span className="flex items-center gap-1.5 text-muted">
+                {accountName(accountId)}
+                {updown}
+              </span>
               <select
                 id="account_id"
                 name="account_id"
@@ -293,10 +253,11 @@ export function RecurringForm({
 
             {tipo === "transferencia" && (
               <div className={row}>
-                <label htmlFor="to_account_id" className="text-[15px]">
-                  Hacia
-                </label>
-                <span className="text-[15px] text-muted">{accountName(toAccountId)}</span>
+                <label htmlFor="to_account_id">Hacia</label>
+                <span className="flex items-center gap-1.5 text-muted">
+                  {accountName(toAccountId)}
+                  {updown}
+                </span>
                 <select
                   id="to_account_id"
                   name="to_account_id"
@@ -318,49 +279,41 @@ export function RecurringForm({
             <button
               type="button"
               onClick={() => setEndDate("")}
-              className="-mt-3 self-start text-sm text-muted underline"
+              className="-mt-2 ml-4 self-start text-[15px] text-accent"
             >
               Quitar fecha de fin
             </button>
           )}
 
           {state?.error && (
-            <p role="alert" className="text-sm text-negative">
+            <p role="alert" className="ml-4 text-[15px] text-negative">
               {state.error}
             </p>
           )}
         </div>
-
-        <div className="mt-auto px-5 pt-4 pb-4">
-          <button
-            disabled={pending}
-            className="h-[52px] w-full rounded-[14px] bg-accent text-base font-semibold text-on-accent disabled:opacity-50"
-          >
-            {pending ? "Guardando…" : "Guardar"}
-          </button>
-        </div>
       </form>
 
       {initial && (
-        <div className="grid grid-cols-2 gap-3 px-5 pb-[max(env(safe-area-inset-bottom),20px)]">
-          <form action={toggleRecurring}>
-            <input type="hidden" name="id" value={initial.id} />
-            <button className="h-12 w-full rounded-[14px] border border-line bg-card text-[15px]">
-              {initial.active ? "Pausar" : "Reanudar"}
-            </button>
-          </form>
-          <form
-            action={deleteRecurring}
-            onSubmit={(e) => {
-              if (!confirm(`¿Borrar "${initial.name || "este recurrente"}"? Los movimientos pasados se mantienen.`))
-                e.preventDefault();
-            }}
-          >
-            <input type="hidden" name="id" value={initial.id} />
-            <button className="h-12 w-full rounded-[14px] border border-negative/30 bg-card text-[15px] text-negative">
-              Borrar
-            </button>
-          </form>
+        <div className="pb-[max(env(safe-area-inset-bottom),20px)]">
+          <Group>
+            <form action={toggleRecurring} className={groupRow}>
+              <input type="hidden" name="id" value={initial.id} />
+              <button className="w-full text-left text-[17px] text-accent">
+                {initial.active ? "Pausar" : "Reanudar"}
+              </button>
+            </form>
+            <form
+              action={deleteRecurring}
+              onSubmit={(e) => {
+                if (!confirm(`¿Borrar "${initial.name || "este recurrente"}"? Los movimientos pasados se mantienen.`))
+                  e.preventDefault();
+              }}
+              className={groupRow}
+            >
+              <input type="hidden" name="id" value={initial.id} />
+              <button className="w-full text-left text-[17px] text-negative">Borrar</button>
+            </form>
+          </Group>
         </div>
       )}
     </div>

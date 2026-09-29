@@ -129,6 +129,21 @@ export function LargeTitle({
   );
 }
 
+// "‹ Atrás" de una pantalla secundaria, encima del título grande.
+export function BackLink({ href, label }: { href: string; label: string }) {
+  return (
+    <Link
+      href={href}
+      className="-ml-1.5 flex h-9 items-center gap-0.5 self-start text-[17px] text-accent"
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+      {label}
+    </Link>
+  );
+}
+
 // Botón redondo de la cabecera (Mi cuenta, Nuevo…).
 export function RoundButton({
   href,

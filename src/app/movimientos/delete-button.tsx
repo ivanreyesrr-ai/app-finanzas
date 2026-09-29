@@ -1,7 +1,9 @@
 "use client";
 
+import { groupRow } from "@/components/ios";
 import { deleteTransaction } from "./actions";
 
+// Fila roja "Borrar" para usar dentro de un Group.
 export function DeleteButton({ id, label }: { id: string; label: string }) {
   return (
     <form
@@ -9,11 +11,10 @@ export function DeleteButton({ id, label }: { id: string; label: string }) {
       onSubmit={(e) => {
         if (!confirm(label)) e.preventDefault();
       }}
+      className={groupRow}
     >
       <input type="hidden" name="id" value={id} />
-      <button className="h-12 w-full rounded-[14px] border border-negative/30 bg-card text-[15px] text-negative">
-        Borrar
-      </button>
+      <button className="w-full text-left text-[17px] text-negative">Borrar</button>
     </form>
   );
 }

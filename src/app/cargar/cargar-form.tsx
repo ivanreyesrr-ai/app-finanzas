@@ -316,7 +316,7 @@ export function CargarForm({
       </form>
 
       {footer && (
-        <div className="px-4 pb-[max(env(safe-area-inset-bottom),20px)]">{footer}</div>
+        <div className="pb-[max(env(safe-area-inset-bottom),20px)]">{footer}</div>
       )}
     </div>
   );

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { BackLink, Chevron, Group, groupRow } from "@/components/ios";
 import { signOut } from "../actions";
 
 const dateFormat = new Intl.DateTimeFormat("es-ES", {
@@ -19,50 +20,48 @@ export default async function CuentaPage({ searchParams }: PageProps<"/cuenta">)
   } = await supabase.auth.getUser();
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col">
-      <header className="grid grid-cols-[44px_minmax(0,1fr)_44px] items-center px-3 pt-[max(env(safe-area-inset-top),16px)] pb-2">
-        <Link href="/" aria-label="Volver" className="flex size-11 items-center justify-center">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </Link>
-        <h1 className="text-center text-[17px] font-semibold">Mi cuenta</h1>
-        <div />
+    <main className="mx-auto flex w-full max-w-md flex-1 flex-col pb-10">
+      <header className="flex flex-col gap-1 px-4 pt-[calc(max(env(safe-area-inset-top),16px)+4px)]">
+        <BackLink href="/" label="Inicio" />
+        <h1 className="text-[34px] leading-[41px] font-bold tracking-[0.37px]">Mi cuenta</h1>
       </header>
 
-      <div className="flex flex-col gap-6 px-5 pt-4">
-        <section className="flex flex-col gap-1">
-          <div className="text-[17px] font-medium break-all">{user?.email}</div>
-          {user?.last_sign_in_at && (
-            <div className="text-[13px] text-muted">
-              Último inicio de sesión: {dateFormat.format(new Date(user.last_sign_in_at))}
+      {ok === "contrasena" && (
+        <p role="status" className="mx-4 mt-3 rounded-xl bg-accent/10 p-3 text-[15px] text-accent">
+          Contraseña actualizada.
+        </p>
+      )}
+
+      <div className="mt-5">
+        <Group>
+          <div className={groupRow}>
+            <div className="flex min-w-0 flex-col">
+              <div className="text-[17px] break-all">{user?.email}</div>
+              {user?.last_sign_in_at && (
+                <div className="text-[13px] text-muted">
+                  Último inicio de sesión: {dateFormat.format(new Date(user.last_sign_in_at))}
+                </div>
+              )}
             </div>
-          )}
-        </section>
+          </div>
+        </Group>
+      </div>
 
-        {ok === "contrasena" && (
-          <p role="status" className="rounded-xl bg-accent/10 p-3 text-sm text-accent">
-            Contraseña actualizada.
-          </p>
-        )}
-
-        <nav className="flex flex-col rounded-2xl bg-card px-4">
-          <Link
-            href="/cuenta/contrasena"
-            className="flex h-12 items-center justify-between text-[15px]"
-          >
-            Cambiar contraseña
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
+      <div className="mt-8">
+        <Group>
+          <Link href="/cuenta/contrasena" className={groupRow}>
+            <span className="text-[17px]">Cambiar contraseña</span>
+            <Chevron />
           </Link>
-        </nav>
+        </Group>
+      </div>
 
-        <form action={signOut}>
-          <button className="h-12 w-full rounded-[14px] border border-negative/30 bg-card text-[15px] text-negative">
-            Cerrar sesión
-          </button>
-        </form>
+      <div className="mt-8">
+        <Group>
+          <form action={signOut} className={groupRow}>
+            <button className="w-full text-left text-[17px] text-negative">Cerrar sesión</button>
+          </form>
+        </Group>
       </div>
     </main>
   );

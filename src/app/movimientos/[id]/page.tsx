@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Transaction } from "@/lib/types";
 import { CargarForm } from "../../cargar/cargar-form";
 import { loadMovementForm } from "../../cargar/load";
+import { Chevron, Group, groupRow } from "@/components/ios";
 import { DeleteButton } from "../delete-button";
 
 export default async function EditarMovimiento({
@@ -41,17 +42,15 @@ export default async function EditarMovimiento({
       initial={{ ...t, amount: Number(t.amount) }}
       backHref={back}
       footer={
-        <div className={`grid gap-3 ${t.type === "gasto" ? "grid-cols-2" : "grid-cols-1"}`}>
+        <Group>
           {t.type === "gasto" && (
-            <Link
-              href={`/movimientos/${t.id}/devolucion`}
-              className="flex h-12 items-center justify-center rounded-[14px] border border-line bg-card text-[15px]"
-            >
-              Registrar devolución
+            <Link href={`/movimientos/${t.id}/devolucion`} className={groupRow}>
+              <span className="text-[17px] text-accent">Registrar devolución</span>
+              <Chevron />
             </Link>
           )}
           <DeleteButton id={t.id} label={confirmText} />
-        </div>
+        </Group>
       }
     />
   );
