@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useActionState, useMemo, useState } from "react";
 import { flexCycle } from "@/lib/flex";
 import { formatEUR, formatShortDate } from "@/lib/format";
 import type { Account, Category, Transaction, TransactionType } from "@/lib/types";
 import { Chip } from "@/components/chip";
+import { SectionLabel, Segmented, SheetHeader, Switch } from "@/components/ios";
 import { createTransaction } from "./actions";
 import { updateTransaction } from "../movimientos/actions";
 
@@ -29,9 +29,17 @@ const TITLES: Partial<Record<TransactionType, string>> = {
   devolucion: "Devolución",
 };
 
-const label = "text-[13px] text-muted";
 const rowSelect =
   "absolute inset-0 w-full cursor-pointer opacity-0"; // control nativo invisible sobre la fila
+const row =
+  "relative flex min-h-11 items-center justify-between gap-3 border-b-[0.5px] border-line pr-4 text-[17px] last:border-b-0";
+
+const updown = (
+  <svg width="11" height="16" viewBox="0 0 11 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60" aria-hidden="true">
+    <polyline points="3 5 5.5 2.5 8 5" />
+    <polyline points="3 11 5.5 13.5 8 11" />
+  </svg>
+);
 
 // Sin `initial`: "Nuevo movimiento". Con `initial`: editor del movimiento.
 // Saldo inicial y devolución se editan sin tipo ni categoría (la devolución
@@ -130,52 +138,15 @@ export function CargarForm({
         <input type="hidden" name="type" value={special ? initial!.type : tipo} />
         <input type="hidden" name="category_id" value={categoryId ?? ""} />
 
-        <header className="flex items-center justify-between px-3 pt-[max(env(safe-area-inset-top),16px)]">
-          <Link
-            href={backHref}
-            aria-label="Cerrar"
-            className="flex size-11 items-center justify-center"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <line x1="6" y1="6" x2="18" y2="18" />
-              <line x1="18" y1="6" x2="6" y2="18" />
-            </svg>
-          </Link>
-          <h1 className="text-[17px] font-semibold">{title}</h1>
-          <div className="size-11" />
-        </header>
+        <SheetHeader title={title} cancelHref={backHref} saving={pending} />
 
-        <div className="flex flex-col gap-5 px-5 pt-4">
+        <div className="flex flex-col gap-[18px] px-4 pt-2 pb-6">
           {!special && (
-            <div
-              role="radiogroup"
-              aria-label="Tipo"
-              className="grid grid-cols-3 gap-1 rounded-xl bg-segment p-1"
-            >
-              {TIPOS.map((t) => (
-                <button
-                  key={t.value}
-                  type="button"
-                  role="radio"
-                  aria-checked={tipo === t.value}
-                  onClick={() => changeTipo(t.value)}
-                  className={`h-10 rounded-[9px] text-sm ${
-                    tipo === t.value
-                      ? "bg-segment-on font-semibold text-foreground shadow-sm"
-                      : "text-muted"
-                  }`}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
+            <Segmented label="Tipo" options={TIPOS} value={tipo} onChange={changeTipo} />
           )}
 
-          <div className="flex flex-col items-center gap-1 py-2">
-            <label htmlFor="amount" className={label}>
-              Importe
-            </label>
-            <div className="flex items-baseline justify-center font-serif text-[60px] leading-tight">
+          <div className="flex flex-col items-center gap-0.5 pt-1.5 pb-0.5">
+            <div className="flex items-baseline justify-center font-serif text-[64px] leading-[1.05]">
               <input
                 id="amount"
                 name="amount"
@@ -194,29 +165,34 @@ export function CargarForm({
               />
               <span className="ml-2">€</span>
             </div>
+            <label htmlFor="amount" className="text-[13px] text-muted">
+              Importe
+            </label>
             {special && selectedCat && (
-              <p className="text-sm text-muted">Categoría: {selectedCat.name}</p>
+              <p className="text-[13px] text-muted">Categoría: {selectedCat.name}</p>
             )}
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="name" className={label}>
-              Nombre
-            </label>
-            <input
-              id="name"
-              name="name"
-              autoComplete="off"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Opcional"
-              className="h-12 rounded-xl border border-line bg-card px-3.5 text-base outline-none focus:border-accent"
-            />
+          <div className="rounded-[10px] bg-card pl-4">
+            <div className={row}>
+              <label htmlFor="name" className="w-24 shrink-0">
+                Nombre
+              </label>
+              <input
+                id="name"
+                name="name"
+                autoComplete="off"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Opcional"
+                className="min-w-0 grow bg-transparent py-2.5 outline-none placeholder:text-muted/60"
+              />
+            </div>
           </div>
 
           {!special && tipo === "gasto" && (
             <div className="flex flex-col gap-2">
-              <div className={label}>Categoría</div>
+              <SectionLabel>Categoría</SectionLabel>
               <div className="flex flex-wrap gap-2">
                 {parents.map((c) => (
                   <Chip
@@ -236,9 +212,7 @@ export function CargarForm({
 
           {!special && tipo !== "transferencia" && subs.length > 0 && (
             <div className="flex flex-col gap-2">
-              <div className={label}>
-                {tipo === "ingreso" ? "Categoría" : "Subcategoría"}
-              </div>
+              <SectionLabel>{tipo === "ingreso" ? "Categoría" : "Subcategoría"}</SectionLabel>
               <div className="flex flex-wrap gap-2">
                 {subs.map((c) => (
                   <Chip key={c.id} on={subId === c.id} onClick={() => setSubId(c.id)}>
@@ -247,7 +221,7 @@ export function CargarForm({
                 ))}
               </div>
               {flexLeft && (
-                <p className="text-sm text-muted">
+                <p className="ml-4 text-[13px] text-muted">
                   Te quedan{" "}
                   <span className={flexLeft.left < 0 ? "text-negative" : "text-accent"}>
                     {formatEUR(flexLeft.left)}
@@ -258,12 +232,10 @@ export function CargarForm({
             </div>
           )}
 
-          <div className="flex flex-col rounded-2xl bg-card px-4">
-            <div className="relative flex h-12 items-center justify-between border-b border-line-soft">
-              <label htmlFor="date" className="text-[15px]">
-                Fecha
-              </label>
-              <span className="text-[15px] text-muted">{dateLabel}</span>
+          <div className="flex flex-col rounded-[10px] bg-card pl-4">
+            <div className={row}>
+              <label htmlFor="date">Fecha</label>
+              <span className="rounded-[7px] bg-fill px-2.5 py-1 text-accent">{dateLabel}</span>
               <input
                 id="date"
                 name="date"
@@ -275,11 +247,14 @@ export function CargarForm({
               />
             </div>
 
-            <div className="relative flex h-12 items-center justify-between border-b border-line-soft last:border-b-0">
-              <label htmlFor="account_id" className="text-[15px]">
+            <div className={row}>
+              <label htmlFor="account_id">
                 {tipo === "transferencia" && !special ? "Desde" : "Cuenta"}
               </label>
-              <span className="text-[15px] text-muted">{accountName(accountId)}</span>
+              <span className="flex items-center gap-1.5 text-muted">
+                {accountName(accountId)}
+                {updown}
+              </span>
               <select
                 id="account_id"
                 name="account_id"
@@ -296,11 +271,12 @@ export function CargarForm({
             </div>
 
             {!special && tipo === "transferencia" && (
-              <div className="relative flex h-12 items-center justify-between border-b border-line-soft last:border-b-0">
-                <label htmlFor="to_account_id" className="text-[15px]">
-                  Hacia
-                </label>
-                <span className="text-[15px] text-muted">{accountName(toAccountId)}</span>
+              <div className={row}>
+                <label htmlFor="to_account_id">Hacia</label>
+                <span className="flex items-center gap-1.5 text-muted">
+                  {accountName(toAccountId)}
+                  {updown}
+                </span>
                 <select
                   id="to_account_id"
                   name="to_account_id"
@@ -318,46 +294,30 @@ export function CargarForm({
             )}
 
             {!initial && (
-              <div className="flex h-12 items-center justify-between">
-                <label htmlFor="repeat" className="text-[15px]">
-                  Repetir cada mes
-                </label>
-                <input
-                  id="repeat"
-                  name="repeat"
-                  type="checkbox"
-                  checked={repeat}
-                  onChange={(e) => setRepeat(e.target.checked)}
-                  className="size-[22px] accent-accent"
-                />
+              <div className={row}>
+                <label htmlFor="repeat">Repetir cada mes</label>
+                <Switch id="repeat" name="repeat" checked={repeat} onChange={setRepeat} />
               </div>
             )}
           </div>
 
           {initial?.recurring_id && (
-            <p className="text-sm text-muted">
+            <p className="ml-4 text-[13px] text-muted">
               Viene de un recurrente: el cambio aplica solo a este movimiento.
             </p>
           )}
 
           {state?.error && (
-            <p role="alert" className="text-sm text-negative">
+            <p role="alert" className="ml-4 text-[15px] text-negative">
               {state.error}
             </p>
           )}
         </div>
-
-        <div className="mt-auto px-5 pt-4 pb-4">
-          <button
-            disabled={pending}
-            className="h-[52px] w-full rounded-[14px] bg-accent text-base font-semibold text-on-accent disabled:opacity-50"
-          >
-            {pending ? "Guardando…" : "Guardar"}
-          </button>
-        </div>
       </form>
 
-      <div className="px-5 pb-[max(env(safe-area-inset-bottom),20px)]">{footer}</div>
+      {footer && (
+        <div className="px-4 pb-[max(env(safe-area-inset-bottom),20px)]">{footer}</div>
+      )}
     </div>
   );
 }
