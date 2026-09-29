@@ -11,6 +11,16 @@ import {
 } from "@/lib/recurring";
 import type { Account, Category } from "@/lib/types";
 import { BottomNav } from "@/components/bottom-nav";
+import { EyeToggle } from "@/components/eye-toggle";
+import {
+  Chevron,
+  Group,
+  groupRow,
+  LargeTitle,
+  plusIcon,
+  RoundButton,
+  SectionTitle,
+} from "@/components/ios";
 
 const GROUPS: { freq: Frequency; title: string }[] = [
   { freq: "mensual", title: "Mensuales" },
@@ -51,53 +61,59 @@ export default async function RecurrentesPage() {
         : `${categoryName.get(r.category_id ?? "") ?? ""} · ${accountName.get(r.account_id)}`;
     const sign = r.type === "ingreso" ? "+" : r.type === "gasto" ? "−" : "";
     return (
-      <Link
-        href={`/recurrentes/${r.id}`}
-        className={`flex items-center justify-between gap-3 border-b border-line-soft py-3 last:border-b-0 ${r.active ? "" : "opacity-50"}`}
-      >
-        <div className="min-w-0">
-          <div className="truncate text-[15px]">
+      <Link href={`/recurrentes/${r.id}`} className={groupRow}>
+        <div className={`min-w-0 grow ${r.active ? "" : "opacity-50"}`}>
+          <div className="truncate text-[17px]">
             {r.name || categoryName.get(r.category_id ?? "") || "Transferencia"}
           </div>
           <div className="truncate text-[13px] text-muted">{detail}</div>
         </div>
-        <div className="flex shrink-0 flex-col items-end">
-          <div className={`text-[15px] ${r.type === "ingreso" ? "text-accent" : ""}`}>
+        <div className={`flex shrink-0 flex-col items-end ${r.active ? "" : "opacity-50"}`}>
+          <div className={`text-[17px] ${r.type === "ingreso" ? "text-accent" : ""}`}>
             {money(r.amount, hidden, sign)}
           </div>
           <div className="text-[13px] text-muted">{when}</div>
         </div>
+        <Chevron />
       </Link>
     );
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-5 px-5 pt-[max(env(safe-area-inset-top),24px)] pb-32 tabular-nums">
-      <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Recurrentes</h1>
-        <Link
-          href="/recurrentes/nuevo"
-          className="rounded-full border border-line bg-card px-3.5 py-2 text-sm"
-        >
-          + Nuevo
-        </Link>
-      </header>
+    <main className="mx-auto flex w-full max-w-md flex-1 flex-col pb-32 tabular-nums">
+      <LargeTitle
+        title="Recurrentes"
+        actions={
+          <>
+            <EyeToggle hidden={hidden} />
+            <RoundButton href="/recurrentes/nuevo" label="Nuevo recurrente">
+              {plusIcon}
+            </RoundButton>
+          </>
+        }
+      />
 
       {genError && (
-        <p role="alert" className="rounded-xl bg-negative/10 p-3 text-sm text-negative">
+        <p role="alert" className="mx-4 mt-2 rounded-xl bg-negative/10 p-3 text-sm text-negative">
           No se pudieron generar los recurrentes del mes. ¿Aplicaste la migración
           20260927000005_generar_recurrentes.sql? ({genError.message})
         </p>
       )}
 
-      <p className="-mt-2 text-sm text-muted">
-        Comprometido por mes:{" "}
-        <span className="text-foreground">{money(monthlyCommitment(all), hidden)}</span>
-      </p>
+      <div className="mt-3">
+        <Group>
+          <div className={groupRow}>
+            <div className="text-[17px]">Comprometido por mes</div>
+            <div className="text-[17px] font-semibold">
+              {money(monthlyCommitment(all), hidden)}
+            </div>
+          </div>
+        </Group>
+      </div>
 
       {all.length === 0 && (
-        <p className="text-muted">
-          Todavía no tenés recurrentes. Creá uno con “+ Nuevo” o marcando “Repetir
+        <p className="mx-8 mt-6 text-[15px] text-muted">
+          Todavía no tenés recurrentes. Creá uno con el + o marcando “Repetir
           cada mes” al cargar un movimiento.
         </p>
       )}
@@ -106,26 +122,26 @@ export default async function RecurrentesPage() {
         const list = all.filter((r) => r.active && r.frequency === freq);
         if (!list.length) return null;
         return (
-          <section key={freq} className="flex flex-col gap-2">
-            <h2 className="text-xs font-medium tracking-wide text-muted uppercase">{title}</h2>
-            <div className="flex flex-col rounded-2xl bg-card px-4">
+          <div key={freq}>
+            <SectionTitle>{title}</SectionTitle>
+            <Group>
               {list.map((r) => (
                 <Row key={r.id} r={r} />
               ))}
-            </div>
-          </section>
+            </Group>
+          </div>
         );
       })}
 
       {paused.length > 0 && (
-        <section className="flex flex-col gap-2">
-          <h2 className="text-xs font-medium tracking-wide text-muted uppercase">Pausados</h2>
-          <div className="flex flex-col rounded-2xl bg-card px-4">
+        <div>
+          <SectionTitle>Pausados</SectionTitle>
+          <Group>
             {paused.map((r) => (
               <Row key={r.id} r={r} />
             ))}
-          </div>
-        </section>
+          </Group>
+        </div>
       )}
 
       <BottomNav />

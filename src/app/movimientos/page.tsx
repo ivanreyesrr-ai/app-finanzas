@@ -7,6 +7,8 @@ import { addMonths, isMonth } from "@/lib/month";
 import { groupMovements, signedAmount, type Filter } from "@/lib/movements";
 import type { Account, Category, Transaction } from "@/lib/types";
 import { BottomNav } from "@/components/bottom-nav";
+import { EyeToggle } from "@/components/eye-toggle";
+import { Chevron, Group, groupRow, LargeTitle, SectionTitle } from "@/components/ios";
 import { MonthNav } from "@/components/month-nav";
 
 const FILTERS: { value: Filter; label: string }[] = [
@@ -90,12 +92,9 @@ export default async function MovimientosPage({
     const sign = s > 0 ? "+" : s < 0 ? "−" : "";
     const pending = t.date > today;
     return (
-      <Link
-        href={`/movimientos/${t.id}`}
-        className="flex items-center justify-between gap-3 border-b border-line-soft py-3 last:border-b-0"
-      >
-        <div className="min-w-0">
-          <div className="truncate text-[15px]">
+      <Link href={`/movimientos/${t.id}`} className={groupRow}>
+        <div className="min-w-0 grow">
+          <div className="truncate text-[17px]">
             {showDate && <span className="mr-1.5 text-muted">{formatShortDate(t.date)}</span>}
             {title}
             {t.recurring_id && <span className="ml-1 text-muted" title="Recurrente">↻</span>}
@@ -105,9 +104,10 @@ export default async function MovimientosPage({
             {detail}
           </div>
         </div>
-        <div className={`shrink-0 text-[15px] ${s > 0 ? "text-accent" : ""} ${pending ? "text-muted" : ""}`}>
+        <div className={`shrink-0 text-[17px] ${s > 0 ? "text-accent" : ""} ${pending ? "text-muted" : ""}`}>
           {money(t.amount, hidden, sign)}
         </div>
+        <Chevron />
       </Link>
     );
   }
@@ -116,85 +116,88 @@ export default async function MovimientosPage({
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col pb-32 tabular-nums">
-      <header className="flex justify-center px-3 pt-[max(env(safe-area-inset-top),16px)] pb-2">
+      <LargeTitle title="Movimientos" actions={<EyeToggle hidden={hidden} />}>
         <MonthNav basePath="/movimientos" month={month} currentMonth={currentMonth} extra={extra} />
-      </header>
+      </LargeTitle>
 
-      <div className="flex flex-col gap-3 px-5 pt-2">
-        <form action="/movimientos" className="flex">
+      <div className="flex flex-col gap-3 px-4 pt-1">
+        <form action="/movimientos" className="relative flex">
           <input type="hidden" name="mes" value={month} />
           {filter !== "todos" && <input type="hidden" name="tipo" value={filter} />}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2 text-muted" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <line x1="20" y1="20" x2="16.5" y2="16.5" />
+          </svg>
           <input
             type="search"
             name="q"
             defaultValue={query}
             placeholder="Buscar por nombre o categoría"
             aria-label="Buscar"
-            className="h-11 w-full rounded-xl border border-line bg-card px-3.5 text-base outline-none focus:border-accent"
+            className="h-9 w-full rounded-[10px] bg-segment pr-3 pl-8 text-[17px] outline-none placeholder:text-muted"
           />
         </form>
-        <div className="flex flex-wrap gap-2">
+        <nav
+          aria-label="Filtrar por tipo"
+          className="grid grid-cols-4 gap-0.5 rounded-[9px] bg-segment p-0.5"
+        >
           {FILTERS.map((f) => (
             <Link
               key={f.value}
               href={qs({ tipo: f.value })}
               aria-current={filter === f.value ? "true" : undefined}
-              className={`flex h-9 items-center rounded-full border px-3.5 text-sm ${
+              className={`flex h-[30px] items-center justify-center rounded-[7px] text-[13px] ${
                 filter === f.value
-                  ? "border-accent bg-accent text-on-accent"
-                  : "border-line bg-card text-foreground"
+                  ? "bg-segment-on font-semibold shadow-[0_3px_8px_rgba(0,0,0,0.12),0_3px_1px_rgba(0,0,0,0.04)]"
+                  : "font-medium"
               }`}
             >
               {f.label}
             </Link>
           ))}
+        </nav>
+      </div>
+
+      {empty && (
+        <p className="mx-8 mt-6 text-[15px] text-muted">
+          {query || filter !== "todos"
+            ? "No hay movimientos con ese filtro."
+            : "No hay movimientos este mes."}
+        </p>
+      )}
+
+      {days.map((d) => (
+        <div key={d.date}>
+          <SectionTitle
+            right={d.total !== 0 && money(Math.abs(d.total), hidden, d.total > 0 ? "+" : "−")}
+          >
+            {dayLabel(d.date, today)}
+            {d.date > today && " (pendiente)"}
+          </SectionTitle>
+          <Group>
+            {d.items.map((t) => (
+              <Row key={t.id} t={t} />
+            ))}
+          </Group>
         </div>
-      </div>
+      ))}
 
-      <div className="flex flex-col gap-5 px-5 pt-5">
-        {empty && (
-          <p className="text-muted">
-            {query || filter !== "todos"
-              ? "No hay movimientos con ese filtro."
-              : "No hay movimientos este mes."}
+      {flex.items.length > 0 && (
+        <div>
+          <SectionTitle right={money(Math.abs(flex.total), hidden, flex.total > 0 ? "+" : "−")}>
+            Flex descontado en esta nómina
+          </SectionTitle>
+          <Group>
+            {flex.items.map((t) => (
+              <Row key={t.id} t={t} showDate />
+            ))}
+          </Group>
+          <p className="mx-8 mt-1.5 text-[13px] text-muted">
+            Gastado del {formatShortDate(`${addMonths(month, -2)}-20`)} al{" "}
+            {formatShortDate(`${addMonths(month, -1)}-19`)}
           </p>
-        )}
-
-        {days.map((d) => (
-          <section key={d.date} className="flex flex-col gap-2">
-            <div className="flex items-baseline justify-between text-xs font-medium tracking-wide text-muted">
-              <h2>
-                {dayLabel(d.date, today)}
-                {d.date > today && " (pendiente)"}
-              </h2>
-              {d.total !== 0 && <span>{money(Math.abs(d.total), hidden, d.total > 0 ? "+" : "−")}</span>}
-            </div>
-            <div className="flex flex-col rounded-2xl bg-card px-4">
-              {d.items.map((t) => (
-                <Row key={t.id} t={t} />
-              ))}
-            </div>
-          </section>
-        ))}
-
-        {flex.items.length > 0 && (
-          <section className="flex flex-col gap-2">
-            <div className="flex items-baseline justify-between text-xs font-medium tracking-wide text-muted">
-              <h2>FLEX DESCONTADO EN ESTA NÓMINA</h2>
-              <span>{money(Math.abs(flex.total), hidden, flex.total > 0 ? "+" : "−")}</span>
-            </div>
-            <p className="-mt-1 text-xs text-muted">
-              Gastado del {formatShortDate(`${addMonths(month, -2)}-20`)} al{" "}
-              {formatShortDate(`${addMonths(month, -1)}-19`)}
-            </p>
-            <div className="flex flex-col rounded-2xl bg-card px-4">
-              {flex.items.map((t) => (
-                <Row key={t.id} t={t} showDate />
-              ))}
-            </div>
-          </section>
-        )}
-      </div>
+        </div>
+      )}
 
       <BottomNav />
     </main>

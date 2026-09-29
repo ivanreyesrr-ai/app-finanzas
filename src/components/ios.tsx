@@ -107,3 +107,83 @@ export function Switch({
 export function SectionLabel({ children }: { children: React.ReactNode }) {
   return <div className="ml-4 text-[13px] text-muted uppercase">{children}</div>;
 }
+
+// Cabecera de pestaña: botones redondos arriba a la derecha y título grande.
+export function LargeTitle({
+  title,
+  actions,
+  children,
+}: {
+  title: string;
+  actions?: React.ReactNode;
+  children?: React.ReactNode;
+}) {
+  return (
+    <header className="flex flex-col gap-1.5 px-4 pt-[max(env(safe-area-inset-top),16px)]">
+      <div className="flex h-9 justify-end gap-2">{actions}</div>
+      <h1 className="text-[34px] leading-[41px] font-bold tracking-[0.37px]">{title}</h1>
+      {children}
+    </header>
+  );
+}
+
+// Botón redondo de la cabecera (Mi cuenta, Nuevo…).
+export function RoundButton({
+  href,
+  label,
+  children,
+}: {
+  href: string;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      aria-label={label}
+      className="flex size-9 items-center justify-center rounded-full bg-fill text-accent"
+    >
+      {children}
+    </Link>
+  );
+}
+
+export const plusIcon = (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true">
+    <line x1="12" y1="5" x2="12" y2="19" />
+    <line x1="5" y1="12" x2="19" y2="12" />
+  </svg>
+);
+
+// Título de un grupo de lista (mayúsculas, gris), con un valor opcional a la derecha.
+export function SectionTitle({
+  children,
+  right,
+}: {
+  children: React.ReactNode;
+  right?: React.ReactNode;
+}) {
+  return (
+    <h2 className="mx-8 mt-[22px] mb-1.5 flex justify-between gap-3 text-[13px] font-normal text-muted uppercase">
+      <span>{children}</span>
+      {right && <span className="shrink-0">{right}</span>}
+    </h2>
+  );
+}
+
+// Lista agrupada: tarjeta con separadores que arrancan después del margen izquierdo.
+export function Group({ children }: { children: React.ReactNode }) {
+  return <section className="mx-4 flex flex-col rounded-xl bg-card pl-4">{children}</section>;
+}
+
+// Clases de una fila de Group.
+export const groupRow =
+  "flex min-h-11 items-center justify-between gap-3 border-b-[0.5px] border-line py-2.5 pr-4 last:border-b-0";
+
+export function Chevron() {
+  return (
+    <svg width="8" height="13" viewBox="0 0 8 13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-muted opacity-50" aria-hidden="true">
+      <polyline points="1.5 1.5 6.5 6.5 1.5 11.5" />
+    </svg>
+  );
+}

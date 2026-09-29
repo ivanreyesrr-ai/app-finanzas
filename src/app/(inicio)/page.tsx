@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { formatShortDate, todayISO } from "@/lib/format";
 import { isHidden, money } from "@/lib/hidden";
@@ -7,7 +6,6 @@ import { generarRecurrentes } from "@/lib/generate";
 import {
   addMonths,
   isMonth,
-  monthLabel,
   netForAccount,
   prevMonthName,
   summarizeMonth,
@@ -16,17 +14,8 @@ import { projectRecurring, type Recurring } from "@/lib/recurring";
 import type { Account, Category, Transaction } from "@/lib/types";
 import { BottomNav } from "@/components/bottom-nav";
 import { EyeToggle } from "@/components/eye-toggle";
-
-const chevron = {
-  width: 20,
-  height: 20,
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: 2,
-  strokeLinecap: "round" as const,
-  strokeLinejoin: "round" as const,
-};
+import { MonthNav } from "@/components/month-nav";
+import { Group, groupRow, LargeTitle, RoundButton, SectionTitle } from "@/components/ios";
 
 export default async function InicioMes({ searchParams }: PageProps<"/">) {
   const { mes } = await searchParams;
@@ -107,49 +96,22 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col pb-32 tabular-nums">
-      <header className="flex flex-col gap-1.5 px-4 pt-[max(env(safe-area-inset-top),16px)]">
-        <div className="flex justify-end gap-2">
-          <EyeToggle hidden={hidden} />
-          <Link
-            href="/cuenta"
-            aria-label="Mi cuenta"
-            className="flex size-9 items-center justify-center rounded-full bg-fill text-accent"
-          >
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <circle cx="12" cy="8" r="4.2" />
-              <path d="M3.5 21c0-4.4 3.8-7.5 8.5-7.5s8.5 3.1 8.5 7.5z" />
-            </svg>
-          </Link>
-        </div>
-        <h1 className="text-[34px] leading-[41px] font-bold tracking-[0.37px]">Inicio</h1>
-        <div className="-ml-3 flex items-center">
-          <Link
-            href={`/?mes=${addMonths(month, -1)}`}
-            aria-label="Mes anterior"
-            className="flex size-11 items-center justify-center text-accent"
-          >
-            <svg {...chevron}>
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </Link>
-          <Link
-            href="/"
-            className={`text-[17px] font-semibold ${isCurrent ? "" : "underline decoration-line underline-offset-4"}`}
-            aria-label={isCurrent ? undefined : "Volver al mes actual"}
-          >
-            {monthLabel(month)}
-          </Link>
-          <Link
-            href={`/?mes=${addMonths(month, 1)}`}
-            aria-label="Mes siguiente"
-            className="flex size-11 items-center justify-center text-accent"
-          >
-            <svg {...chevron}>
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </Link>
-        </div>
-      </header>
+      <LargeTitle
+        title="Inicio"
+        actions={
+          <>
+            <EyeToggle hidden={hidden} />
+            <RoundButton href="/cuenta" label="Mi cuenta">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <circle cx="12" cy="8" r="4.2" />
+                <path d="M3.5 21c0-4.4 3.8-7.5 8.5-7.5s8.5 3.1 8.5 7.5z" />
+              </svg>
+            </RoundButton>
+          </>
+        }
+      >
+        <MonthNav basePath="/" month={month} currentMonth={today.slice(0, 7)} />
+      </LargeTitle>
 
       {genError && (
         <p role="alert" className="mx-4 mb-2 rounded-xl bg-negative/10 p-3 text-sm text-negative">
@@ -296,19 +258,6 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
   );
 }
 
-function SectionTitle({ children, right }: { children: string; right?: string }) {
-  return (
-    <h2 className="mx-8 mt-[22px] mb-1.5 flex justify-between text-[13px] font-normal text-muted uppercase">
-      <span>{children}</span>
-      {right && <span>{right}</span>}
-    </h2>
-  );
-}
-
-function Group({ children }: { children: React.ReactNode }) {
-  return <section className="mx-4 flex flex-col rounded-xl bg-card pl-4">{children}</section>;
-}
-
 function Row({
   label,
   sub,
@@ -321,7 +270,7 @@ function Row({
   className?: string;
 }) {
   return (
-    <div className="flex min-h-11 items-center justify-between gap-3 border-b-[0.5px] border-line py-2.5 pr-4 last:border-b-0">
+    <div className={groupRow}>
       <div className="flex flex-col">
         <div className="text-[17px]">{label}</div>
         {sub && <div className="text-[13px] text-muted">{sub}</div>}
