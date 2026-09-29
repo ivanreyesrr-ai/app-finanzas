@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { formatShortDate, todayISO } from "@/lib/format";
 import { usdToEur } from "@/lib/fx";
@@ -8,6 +9,7 @@ import type { Account } from "@/lib/types";
 import { BottomNav } from "@/components/bottom-nav";
 import { EyeToggle } from "@/components/eye-toggle";
 import { Chevron, Group, groupRow, LargeTitle, SectionTitle } from "@/components/ios";
+import { Evolucion } from "./evolucion";
 
 const pctFormat = new Intl.NumberFormat("es-ES", {
   minimumFractionDigits: 1,
@@ -17,6 +19,7 @@ const pctFormat = new Intl.NumberFormat("es-ES", {
 export default async function PatrimonioPage() {
   const supabase = await createClient();
   const hidden = await isHidden();
+  const today = todayISO();
 
   const [{ data: accounts }, { data: saldos, error }, fx] =
     await Promise.all([
@@ -25,7 +28,7 @@ export default async function PatrimonioPage() {
         .select("id, name, type, currency, is_daily, sort")
         .order("sort")
         .returns<Account[]>(),
-      supabase.rpc("saldos_cuentas", { p_hoy: todayISO() }),
+      supabase.rpc("saldos_cuentas", { p_hoy: today }),
       usdToEur(),
     ]);
 
@@ -70,6 +73,25 @@ export default async function PatrimonioPage() {
             ))}
         </div>
       </section>
+
+      {!error && (
+        <Suspense
+          fallback={
+            <>
+              <SectionTitle>Evolución</SectionTitle>
+              <div aria-busy="true" className="mx-4 h-[250px] animate-pulse rounded-xl bg-card" />
+            </>
+          }
+        >
+          <Evolucion
+            accounts={accounts ?? []}
+            today={today}
+            hoy={total}
+            fxRate={fx?.rate ?? null}
+            hidden={hidden}
+          />
+        </Suspense>
+      )}
 
       <SectionTitle>Cuentas</SectionTitle>
       <Group>
