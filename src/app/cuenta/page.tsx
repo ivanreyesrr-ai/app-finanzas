@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { DEMO_EMAIL } from "@/lib/demo";
 import { BackLink, Chevron, Group, groupRow } from "@/components/ios";
 import { signOut } from "../actions";
 
@@ -47,14 +48,20 @@ export default async function CuentaPage({ searchParams }: PageProps<"/cuenta">)
         </Group>
       </div>
 
-      <div className="mt-8">
-        <Group>
-          <Link href="/cuenta/contrasena" className={groupRow}>
-            <span className="text-[17px]">Cambiar contraseña</span>
-            <Chevron />
-          </Link>
-        </Group>
-      </div>
+      {user?.email === DEMO_EMAIL ? (
+        <p className="mx-8 mt-2 text-[13px] text-muted">
+          Estás en la demo: los datos son inventados y se pueden tocar sin miedo.
+        </p>
+      ) : (
+        <div className="mt-8">
+          <Group>
+            <Link href="/cuenta/contrasena" className={groupRow}>
+              <span className="text-[17px]">Cambiar contraseña</span>
+              <Chevron />
+            </Link>
+          </Group>
+        </div>
+      )}
 
       <div className="mt-8">
         <Group>
