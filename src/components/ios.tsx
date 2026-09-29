@@ -17,7 +17,7 @@ export function SheetHeader({
   disabled?: boolean;
 }) {
   return (
-    <header className="grid h-11 grid-cols-[96px_minmax(0,1fr)_96px] items-center px-4 pt-[env(safe-area-inset-top)] box-content">
+    <header className="grid h-11 grid-cols-[96px_minmax(0,1fr)_96px] items-center px-4 pt-[calc(env(safe-area-inset-top)+14px)] box-content">
       <Link href={cancelHref} className="text-[17px] text-accent">
         Cancelar
       </Link>
