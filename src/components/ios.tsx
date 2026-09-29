@@ -108,7 +108,7 @@ export function SectionLabel({ children }: { children: React.ReactNode }) {
   return <div className="ml-4 text-[13px] text-muted uppercase">{children}</div>;
 }
 
-// Cabecera de pestaña: botones redondos arriba a la derecha y título grande.
+// Cabecera de pestaña: título grande con los botones redondos en la misma línea.
 export function LargeTitle({
   title,
   actions,
@@ -119,9 +119,11 @@ export function LargeTitle({
   children?: React.ReactNode;
 }) {
   return (
-    <header className="flex flex-col gap-1.5 px-4 pt-[max(env(safe-area-inset-top),16px)]">
-      <div className="flex h-9 justify-end gap-2">{actions}</div>
-      <h1 className="text-[34px] leading-[41px] font-bold tracking-[0.37px]">{title}</h1>
+    <header className="flex flex-col gap-1 px-4 pt-[calc(max(env(safe-area-inset-top),16px)+12px)]">
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-[34px] leading-[41px] font-bold tracking-[0.37px]">{title}</h1>
+        <div className="flex shrink-0 gap-2">{actions}</div>
+      </div>
       {children}
     </header>
   );
