@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { todayISO } from "@/lib/format";
 import type { Recurring } from "@/lib/recurring";
+import { selectableCategories } from "@/lib/types";
 import { RecurringForm } from "../recurring-form";
 import { loadFormData } from "../form-data";
 
@@ -20,7 +21,7 @@ export default async function EditarRecurrente({
   return (
     <RecurringForm
       accounts={accounts}
-      categories={categories}
+      categories={selectableCategories(categories, r.category_id)}
       today={todayISO()}
       initial={{ ...r, amount: Number(r.amount) }}
     />

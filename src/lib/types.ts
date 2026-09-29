@@ -24,7 +24,16 @@ export type Category = {
   kind: "gasto" | "ingreso";
   cycle_limit: number | null;
   sort: number;
+  archived?: boolean;
 };
+
+// Categorías para elegir al cargar: sin las archivadas, salvo la que ya usa el
+// movimiento que se edita (y su categoría principal).
+export function selectableCategories<C extends Category>(all: C[], currentId?: string | null) {
+  const current = all.find((c) => c.id === currentId);
+  const keep = new Set([current?.id, current?.parent_id].filter(Boolean));
+  return all.filter((c) => !c.archived || keep.has(c.id));
+}
 
 export type Transaction = {
   id: string;

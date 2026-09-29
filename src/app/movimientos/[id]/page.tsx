@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Transaction } from "@/lib/types";
+import { selectableCategories, type Transaction } from "@/lib/types";
 import { CargarForm } from "../../cargar/cargar-form";
 import { loadMovementForm } from "../../cargar/load";
 import { Chevron, Group, groupRow } from "@/components/ios";
@@ -36,7 +36,7 @@ export default async function EditarMovimiento({
   return (
     <CargarForm
       accounts={accounts}
-      categories={categories}
+      categories={selectableCategories(categories, t.category_id)}
       flexMovements={flexMovements}
       today={today}
       initial={{ ...t, amount: Number(t.amount) }}

@@ -144,6 +144,29 @@ export function BackLink({ href, label }: { href: string; label: string }) {
   );
 }
 
+// Cabecera de pantalla secundaria: "‹ Atrás", título grande y botones a la derecha.
+export function SubPageHeader({
+  back,
+  backLabel,
+  title,
+  actions,
+}: {
+  back: string;
+  backLabel: string;
+  title: string;
+  actions?: React.ReactNode;
+}) {
+  return (
+    <header className="flex flex-col gap-1 px-4 pt-[calc(max(env(safe-area-inset-top),16px)+4px)]">
+      <BackLink href={back} label={backLabel} />
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-[34px] leading-[41px] font-bold tracking-[0.37px]">{title}</h1>
+        {actions && <div className="flex shrink-0 gap-2">{actions}</div>}
+      </div>
+    </header>
+  );
+}
+
 // Botón redondo de la cabecera (Mi cuenta, Nuevo…).
 export function RoundButton({
   href,

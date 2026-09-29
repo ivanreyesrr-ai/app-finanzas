@@ -1,4 +1,5 @@
 import { todayISO } from "@/lib/format";
+import { selectableCategories } from "@/lib/types";
 import { RecurringForm } from "../recurring-form";
 import { loadFormData } from "../form-data";
 
@@ -7,7 +8,7 @@ export default async function NuevoRecurrente() {
   return (
     <RecurringForm
       accounts={accounts}
-      categories={categories}
+      categories={selectableCategories(categories)}
       today={todayISO()}
       initial={null}
     />

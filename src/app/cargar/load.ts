@@ -4,8 +4,8 @@ import { todayISO } from "@/lib/format";
 import type { Account, Category } from "@/lib/types";
 import type { FlexMovement } from "./cargar-form";
 
-// Datos del formulario de movimiento: cuentas, categorías y el gasto Flex
-// reciente (para "te quedan X de 220 €").
+// Datos del formulario de movimiento: cuentas, categorías (archivadas incluidas:
+// ver selectableCategories) y el gasto Flex reciente (para "te quedan X de 220 €").
 export async function loadMovementForm() {
   const supabase = await createClient();
   const today = todayISO();
@@ -18,8 +18,7 @@ export async function loadMovementForm() {
       .returns<Account[]>(),
     supabase
       .from("categories")
-      .select("id, name, parent_id, kind, cycle_limit, sort")
-      .eq("archived", false)
+      .select("id, name, parent_id, kind, cycle_limit, sort, archived")
       .order("sort")
       .returns<Category[]>(),
   ]);

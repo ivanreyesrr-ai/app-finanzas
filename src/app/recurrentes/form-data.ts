@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Account, Category } from "@/lib/types";
 
-// Cuentas y categorías para el formulario de recurrente.
+// Cuentas y categorías (archivadas incluidas: ver selectableCategories) para el
+// formulario de recurrente.
 export async function loadFormData() {
   const supabase = await createClient();
   const [{ data: accounts }, { data: categories }] = await Promise.all([
@@ -12,8 +13,7 @@ export async function loadFormData() {
       .returns<Account[]>(),
     supabase
       .from("categories")
-      .select("id, name, parent_id, kind, cycle_limit, sort")
-      .eq("archived", false)
+      .select("id, name, parent_id, kind, cycle_limit, sort, archived")
       .order("sort")
       .returns<Category[]>(),
   ]);

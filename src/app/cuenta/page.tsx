@@ -48,6 +48,24 @@ export default async function CuentaPage({ searchParams }: PageProps<"/cuenta">)
         </Group>
       </div>
 
+      <div className="mt-8">
+        <Group>
+          <Link href="/cuenta/cuentas" className={groupRow}>
+            <span className="text-[17px]">Cuentas</span>
+            <Chevron />
+          </Link>
+          <Link href="/cuenta/categorias" className={groupRow}>
+            <span className="text-[17px]">Categorías</span>
+            <Chevron />
+          </Link>
+          {/* Descarga de archivo: <a> normal, no navegación del router. */}
+          <a href="/cuenta/exportar" download className={groupRow}>
+            <span className="text-[17px]">Exportar movimientos (CSV)</span>
+            <Chevron />
+          </a>
+        </Group>
+      </div>
+
       {user?.email === DEMO_EMAIL ? (
         <p className="mx-8 mt-2 text-[13px] text-muted">
           Estás en la demo: los datos son inventados y se pueden tocar sin miedo.

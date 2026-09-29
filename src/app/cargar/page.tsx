@@ -1,3 +1,4 @@
+import { selectableCategories } from "@/lib/types";
 import { CargarForm } from "./cargar-form";
 import { loadMovementForm } from "./load";
 
@@ -6,7 +7,7 @@ export default async function CargarPage() {
   return (
     <CargarForm
       accounts={accounts}
-      categories={categories}
+      categories={selectableCategories(categories)}
       flexMovements={flexMovements}
       today={today}
     />
