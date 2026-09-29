@@ -17,7 +17,10 @@ export function SheetHeader({
   disabled?: boolean;
 }) {
   return (
-    <header className="grid h-11 grid-cols-[96px_minmax(0,1fr)_96px] items-center px-4 pt-[calc(env(safe-area-inset-top)+14px)] box-content">
+    // Fija arriba: al abrir el teclado iOS desplaza la página y la cabecera
+    // quedaba debajo de la barra de estado.
+    <header className="sticky top-0 z-10 box-content grid h-11 grid-cols-[96px_minmax(0,1fr)_96px] items-center bg-background px-4 pt-[calc(env(safe-area-inset-top)+14px)] pb-1">
+
       <Link href={cancelHref} className="text-[17px] text-accent">
         Cancelar
       </Link>
