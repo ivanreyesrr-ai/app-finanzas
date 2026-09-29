@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 const input =
-  "w-full rounded-xl border border-foreground/15 bg-white px-4 py-3 text-base outline-none focus:border-accent";
+  "w-full rounded-xl border border-foreground/15 bg-card px-4 py-3 text-base outline-none focus:border-accent";
 
 export function LoginForm() {
   const router = useRouter();
@@ -62,11 +62,11 @@ export function LoginForm() {
       />
       <button
         disabled={loading}
-        className="mt-2 w-full rounded-xl bg-accent px-4 py-3 font-medium text-white disabled:opacity-50"
+        className="mt-2 w-full rounded-xl bg-accent px-4 py-3 font-medium text-on-accent disabled:opacity-50"
       >
         {loading ? "Entrando…" : "Entrar"}
       </button>
-      {error && <p className="text-sm text-red-700">{error}</p>}
+      {error && <p className="text-sm text-negative">{error}</p>}
     </form>
   );
 }

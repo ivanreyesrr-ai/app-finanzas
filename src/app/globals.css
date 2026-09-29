@@ -1,30 +1,65 @@
 @import "tailwindcss";
 
+/* Paleta estilo iOS. El modo oscuro sigue al del iPhone. */
 :root {
-  --background: #f5f3ee;
-  --foreground: #1a1a17;
+  color-scheme: light dark;
+  --background: #f2f2f7;
+  --foreground: #000000;
+  --card: #ffffff;
   --accent: #1f5e4a;
-  --muted: #5e5b53;
-  --line: #dad6cc;
-  --line-soft: #ece9e2;
-  --segment: #e9e6de;
+  --on-accent: #ffffff;
+  --muted: #6c6c70;
+  --negative: #c0392b;
+  --line: #c6c6c8;
+  --line-soft: #e5e5ea;
+  --track: #e9e9ee;
+  --fill: #e4e4ea;
+  --segment: rgba(118, 118, 128, 0.12);
+  --segment-on: #ffffff;
+  --bar: rgba(249, 249, 249, 0.92);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #000000;
+    --foreground: #ffffff;
+    --card: #1c1c1e;
+    --accent: #5bbf98;
+    --on-accent: #04261b;
+    --muted: #98989f;
+    --negative: #ff6961;
+    --line: #3d3d41;
+    --line-soft: #38383a;
+    --track: #38383a;
+    --fill: #2c2c2e;
+    --segment: rgba(118, 118, 128, 0.24);
+    --segment-on: #636366;
+    --bar: rgba(22, 22, 24, 0.88);
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
   --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
   --color-muted: var(--muted);
+  --color-negative: var(--negative);
   --color-line: var(--line);
   --color-line-soft: var(--line-soft);
+  --color-track: var(--track);
+  --color-fill: var(--fill);
   --color-segment: var(--segment);
-  --font-sans: var(--font-geist-sans);
+  --color-segment-on: var(--segment-on);
+  --color-bar: var(--bar);
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
   --font-serif: var(--font-instrument-serif), Georgia, serif;
-  --font-mono: var(--font-geist-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
 }

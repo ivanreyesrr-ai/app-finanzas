@@ -2,8 +2,9 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
 
-// Ícono de la app: "€" en Instrument Serif, crema sobre el verde de acento.
-// Cuadrado sin redondear: iOS y Android aplican su propia máscara.
+// Ícono de la app: "€" en Instrument Serif, verde de acento sobre blanco
+// (estilo de los íconos claros de iOS). Cuadrado sin redondear: iOS y
+// Android aplican su propia máscara.
 export async function renderAppIcon(size: number) {
   const font = await readFile(join(process.cwd(), "src/assets/InstrumentSerif-Regular.ttf"));
   return new ImageResponse(
@@ -15,8 +16,8 @@ export async function renderAppIcon(size: number) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#1F5E4A",
-          color: "#F5F3EE",
+          backgroundImage: "linear-gradient(180deg, #FFFFFF 0%, #F0F0F3 100%)",
+          color: "#1F5E4A",
           fontFamily: "Instrument Serif",
           fontSize: size * 0.62,
           lineHeight: 1,

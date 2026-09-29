@@ -107,22 +107,26 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col pb-32 tabular-nums">
-      <header className="grid grid-cols-[44px_minmax(0,1fr)_44px] items-center px-3 pt-[max(env(safe-area-inset-top),16px)] pb-2">
-        <Link
-          href="/cuenta"
-          aria-label="Mi cuenta"
-          className="flex size-11 items-center justify-center rounded-full"
-        >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
-          </svg>
-        </Link>
-        <div className="flex items-center justify-center gap-1">
+      <header className="flex flex-col gap-1.5 px-4 pt-[max(env(safe-area-inset-top),16px)]">
+        <div className="flex justify-end gap-2">
+          <EyeToggle hidden={hidden} />
+          <Link
+            href="/cuenta"
+            aria-label="Mi cuenta"
+            className="flex size-9 items-center justify-center rounded-full bg-fill text-accent"
+          >
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <circle cx="12" cy="8" r="4.2" />
+              <path d="M3.5 21c0-4.4 3.8-7.5 8.5-7.5s8.5 3.1 8.5 7.5z" />
+            </svg>
+          </Link>
+        </div>
+        <h1 className="text-[34px] leading-[41px] font-bold tracking-[0.37px]">Inicio</h1>
+        <div className="-ml-3 flex items-center">
           <Link
             href={`/?mes=${addMonths(month, -1)}`}
             aria-label="Mes anterior"
-            className="flex size-11 items-center justify-center rounded-full"
+            className="flex size-11 items-center justify-center text-accent"
           >
             <svg {...chevron}>
               <polyline points="15 18 9 12 15 6" />
@@ -138,36 +142,35 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
           <Link
             href={`/?mes=${addMonths(month, 1)}`}
             aria-label="Mes siguiente"
-            className="flex size-11 items-center justify-center rounded-full"
+            className="flex size-11 items-center justify-center text-accent"
           >
             <svg {...chevron}>
               <polyline points="9 18 15 12 9 6" />
             </svg>
           </Link>
         </div>
-        <EyeToggle hidden={hidden} />
       </header>
 
       {genError && (
-        <p role="alert" className="mx-5 mb-2 rounded-xl bg-red-50 p-3 text-sm text-red-800">
+        <p role="alert" className="mx-4 mb-2 rounded-xl bg-negative/10 p-3 text-sm text-negative">
           No se pudieron generar los recurrentes del mes. ¿Aplicaste la migración
           20260927000005_generar_recurrentes.sql? ({genError.message})
         </p>
       )}
 
       {saldoError && (
-        <p role="alert" className="mx-5 mb-2 rounded-xl bg-red-50 p-3 text-sm text-red-800">
+        <p role="alert" className="mx-4 mb-2 rounded-xl bg-negative/10 p-3 text-sm text-negative">
           No se pudo calcular el saldo del mes anterior. ¿Aplicaste la migración
           20260927000004_saldo_antes_de_mes.sql? ({saldoError.message})
         </p>
       )}
 
-      <section className="flex flex-col gap-1 px-5 pt-3 pb-5">
-        <div className="text-sm text-muted">
+      <section className="mx-4 mt-2 flex flex-col gap-1 rounded-xl bg-card px-4 pt-[18px] pb-4">
+        <div className="text-[15px] text-muted">
           {isPast ? "Terminó el mes con" : "Te queda a fin de mes"}
         </div>
         <div
-          className={`font-serif text-[64px] leading-none ${s.queda < 0 ? "text-red-700" : "text-accent"}`}
+          className={`font-serif text-[58px] leading-[1.02] ${s.queda < 0 ? "text-negative" : "text-accent"}`}
         >
           {m(s.queda)}
         </div>
@@ -180,106 +183,112 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
         </div>
       </section>
 
-      <section className="mx-5 grid grid-cols-2 gap-3.5 rounded-2xl bg-white p-4">
-        <div className="col-span-2 flex items-baseline justify-between border-b border-line-soft pb-3">
-          <div className="flex flex-col gap-0.5">
-            <div className="text-[15px] font-medium">Resultado del mes</div>
-            <div className="text-xs text-muted">
-              Ingresos − gastos{s.pendientes > 0 ? ", con los pendientes" : ""}
-            </div>
-          </div>
-          <div
-            className={`text-[20px] font-semibold ${s.resultado < 0 ? "text-red-700" : "text-accent"}`}
-          >
-            {m(Math.abs(s.resultado), s.resultado < 0 ? "−" : "+")}
-          </div>
-        </div>
-        <Stat label={`Saldo de ${prevMonthName(month)}`} value={m(saldoAnterior)} />
-        <Stat label="Ingresos" value={m(s.ingresos, "+")} className="text-accent" />
-        <Stat
+      <SectionTitle>Resumen</SectionTitle>
+      <Group>
+        <Row
+          label="Resultado del mes"
+          sub={`Ingresos − gastos${s.pendientes > 0 ? ", con los pendientes" : ""}`}
+          value={m(Math.abs(s.resultado), s.resultado < 0 ? "−" : "+")}
+          className={`font-semibold ${s.resultado < 0 ? "text-negative" : "text-accent"}`}
+        />
+        <Row label={`Saldo de ${prevMonthName(month)}`} value={m(saldoAnterior)} />
+        <Row label="Ingresos" value={m(s.ingresos, "+")} className="text-accent" />
+        <Row
           label={isCurrent ? "Gastado hasta hoy" : "Gastado"}
           value={m(s.gastado, "−")}
         />
-        <Stat
+        <Row
           label="Recurrentes pendientes"
           value={m(s.pendientes, "−")}
           className="text-muted"
         />
         {s.transferencias !== 0 && (
-          <Stat
+          <Row
             label="Transferencias"
             value={m(Math.abs(s.transferencias), s.transferencias > 0 ? "+" : "−")}
           />
         )}
         {s.ajustes !== 0 && (
-          <Stat
+          <Row
             label="Ajustes de saldo"
             value={m(Math.abs(s.ajustes), s.ajustes > 0 ? "+" : "−")}
             className="text-muted"
           />
         )}
-      </section>
+      </Group>
 
-      <section className="flex flex-col gap-3 px-5 pt-6 pb-2">
-        <div className="flex items-baseline justify-between">
-          <h2 className="text-[17px] font-semibold">Por categoría</h2>
-          <div className="text-xs text-muted">Total {m(totalCat)}</div>
-        </div>
-        {s.categories.length ? (
-          <div className="flex flex-col rounded-2xl bg-white px-4 py-1">
-            {s.categories.map((c) => (
-              <div
-                key={c.id}
-                className="flex flex-col gap-1.5 border-b border-line-soft py-3 last:border-b-0"
-              >
-                <div className="flex items-baseline justify-between gap-2 text-[15px] font-medium">
-                  <div>{c.name}</div>
-                  <div>{m(c.paid + c.pending)}</div>
-                </div>
-                <div className="flex h-1.5 overflow-hidden rounded-full bg-line-soft">
-                  <div className="bg-accent" style={{ width: pct(c.paid) }} />
-                  <div
-                    style={{
-                      width: pct(c.pending),
-                      background:
-                        "repeating-linear-gradient(45deg, var(--accent) 0 2px, var(--line-soft) 2px 5px)",
-                    }}
-                  />
-                </div>
-                {c.pendingItems.length > 0 && (
-                  <div className="text-xs text-muted">
-                    {c.pendingItems
-                      .map((p) => (hidden ? p.name : `${p.name} ${m(p.amount)}`))
-                      .join(", ")}{" "}
-                    pendiente
-                  </div>
-                )}
+      <SectionTitle right={`Total ${m(totalCat)}`}>Por categoría</SectionTitle>
+      {s.categories.length ? (
+        <Group>
+          {s.categories.map((c) => (
+            <div
+              key={c.id}
+              className="flex flex-col gap-[7px] border-b-[0.5px] border-line py-[11px] pr-4 last:border-b-0"
+            >
+              <div className="flex items-baseline justify-between gap-2 text-[17px]">
+                <div>{c.name}</div>
+                <div className="text-muted">{m(c.paid + c.pending)}</div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm text-muted">Sin gastos este mes.</p>
-        )}
-      </section>
+              <div className="flex h-[5px] overflow-hidden rounded-full bg-track">
+                <div className="bg-accent" style={{ width: pct(c.paid) }} />
+                <div
+                  style={{
+                    width: pct(c.pending),
+                    background:
+                      "repeating-linear-gradient(45deg, var(--accent) 0 2px, var(--track) 2px 5px)",
+                  }}
+                />
+              </div>
+              {c.pendingItems.length > 0 && (
+                <div className="text-[13px] text-muted">
+                  {c.pendingItems
+                    .map((p) => (hidden ? p.name : `${p.name} ${m(p.amount)}`))
+                    .join(", ")}{" "}
+                  pendiente
+                </div>
+              )}
+            </div>
+          ))}
+        </Group>
+      ) : (
+        <p className="mx-8 text-[15px] text-muted">Sin gastos este mes.</p>
+      )}
 
       {s.upcoming.length > 0 && (
-        <section className="flex flex-col gap-3 px-5 pt-4 pb-2">
-          <h2 className="text-[17px] font-semibold">Pendientes del mes</h2>
-          <div className="flex flex-col rounded-2xl bg-white px-4 py-1">
+        <>
+          <SectionTitle>Pendientes del mes</SectionTitle>
+          <Group>
             {s.upcoming.map((p, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between border-b border-line-soft py-3 last:border-b-0"
+                className="flex min-h-14 items-center gap-3 border-b-[0.5px] border-line pr-4 last:border-b-0"
               >
-                <div className="flex flex-col gap-0.5">
-                  <div className="text-[15px]">{p.name}{p.recurring && <span className="ml-1 text-muted" title="Recurrente">↻</span>}</div>
-                  <div className="text-xs text-muted">{formatShortDate(p.date)}</div>
+                <div className="flex size-[30px] shrink-0 items-center justify-center rounded-[7px] bg-accent text-on-accent">
+                  {p.recurring ? (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-label="Recurrente">
+                      <polyline points="17 1 21 5 17 9" />
+                      <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                      <polyline points="7 23 3 19 7 15" />
+                      <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+                    </svg>
+                  ) : (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <rect x="3" y="5" width="18" height="16" rx="2" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                      <line x1="8" y1="3" x2="8" y2="7" />
+                      <line x1="16" y1="3" x2="16" y2="7" />
+                    </svg>
+                  )}
                 </div>
-                <div className="text-[15px] text-muted">{m(p.amount, "−")}</div>
+                <div className="flex grow flex-col">
+                  <div className="text-[17px]">{p.name}</div>
+                  <div className="text-[13px] text-muted">{formatShortDate(p.date)}</div>
+                </div>
+                <div className="text-[17px] text-muted">{m(p.amount, "−")}</div>
               </div>
             ))}
-          </div>
-        </section>
+          </Group>
+        </>
       )}
 
       <BottomNav />
@@ -287,19 +296,37 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
   );
 }
 
-function Stat({
+function SectionTitle({ children, right }: { children: string; right?: string }) {
+  return (
+    <h2 className="mx-8 mt-[22px] mb-1.5 flex justify-between text-[13px] font-normal text-muted uppercase">
+      <span>{children}</span>
+      {right && <span>{right}</span>}
+    </h2>
+  );
+}
+
+function Group({ children }: { children: React.ReactNode }) {
+  return <section className="mx-4 flex flex-col rounded-xl bg-card pl-4">{children}</section>;
+}
+
+function Row({
   label,
+  sub,
   value,
   className = "",
 }: {
   label: string;
+  sub?: string;
   value: string;
   className?: string;
 }) {
   return (
-    <div className="flex flex-col gap-0.5">
-      <div className="text-xs text-muted">{label}</div>
-      <div className={`text-[17px] font-semibold ${className}`}>{value}</div>
+    <div className="flex min-h-11 items-center justify-between gap-3 border-b-[0.5px] border-line py-2.5 pr-4 last:border-b-0">
+      <div className="flex flex-col">
+        <div className="text-[17px]">{label}</div>
+        {sub && <div className="text-[13px] text-muted">{sub}</div>}
+      </div>
+      <div className={`text-[17px] ${className}`}>{value}</div>
     </div>
   );
 }

@@ -44,7 +44,7 @@ export default async function PatrimonioPage() {
       </header>
 
       {error && (
-        <p role="alert" className="mx-5 mb-2 rounded-xl bg-red-50 p-3 text-sm text-red-800">
+        <p role="alert" className="mx-5 mb-2 rounded-xl bg-negative/10 p-3 text-sm text-negative">
           No se pudieron calcular los saldos. ¿Aplicaste la migración
           20260927000006_saldos_cuentas.sql? ({error.message})
         </p>
@@ -78,7 +78,7 @@ export default async function PatrimonioPage() {
       </section>
 
       <section className="flex flex-col gap-3 px-5 pt-5">
-        <div className="flex flex-col rounded-2xl bg-white px-4 py-1">
+        <div className="flex flex-col rounded-2xl bg-card px-4 py-1">
           {rows.map((r) => (
             <div
               key={r.id}
@@ -113,7 +113,7 @@ export default async function PatrimonioPage() {
           </div>
           <Link
             href="/patrimonio/actualizar"
-            className="flex h-11 shrink-0 items-center rounded-xl border border-line bg-white px-3.5 text-sm"
+            className="flex h-11 shrink-0 items-center rounded-xl border border-line bg-card px-3.5 text-sm"
           >
             Actualizar saldo
           </Link>

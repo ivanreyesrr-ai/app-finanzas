@@ -5,7 +5,7 @@ import { useActionState } from "react";
 import { changePassword } from "../actions";
 
 const input =
-  "h-12 w-full rounded-xl border border-line bg-white px-3.5 text-base outline-none focus:border-accent";
+  "h-12 w-full rounded-xl border border-line bg-card px-3.5 text-base outline-none focus:border-accent";
 
 export default function ContrasenaPage() {
   const [state, formAction, pending] = useActionState(changePassword, null);
@@ -39,14 +39,14 @@ export default function ContrasenaPage() {
         <input id="repeat" name="repeat" type="password" autoComplete="new-password" minLength={8} required className={input} />
 
         {state?.error && (
-          <p role="alert" className="text-sm text-red-700">
+          <p role="alert" className="text-sm text-negative">
             {state.error}
           </p>
         )}
 
         <button
           disabled={pending}
-          className="mt-3 h-[52px] w-full rounded-[14px] bg-accent text-base font-semibold text-white disabled:opacity-50"
+          className="mt-3 h-[52px] w-full rounded-[14px] bg-accent text-base font-semibold text-on-accent disabled:opacity-50"
         >
           {pending ? "Guardando…" : "Cambiar contraseña"}
         </button>

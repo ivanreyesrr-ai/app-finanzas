@@ -77,14 +77,14 @@ export default async function RecurrentesPage() {
         <h1 className="text-2xl font-semibold">Recurrentes</h1>
         <Link
           href="/recurrentes/nuevo"
-          className="rounded-full border border-line bg-white px-3.5 py-2 text-sm"
+          className="rounded-full border border-line bg-card px-3.5 py-2 text-sm"
         >
           + Nuevo
         </Link>
       </header>
 
       {genError && (
-        <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm text-red-800">
+        <p role="alert" className="rounded-xl bg-negative/10 p-3 text-sm text-negative">
           No se pudieron generar los recurrentes del mes. ¿Aplicaste la migración
           20260927000005_generar_recurrentes.sql? ({genError.message})
         </p>
@@ -108,7 +108,7 @@ export default async function RecurrentesPage() {
         return (
           <section key={freq} className="flex flex-col gap-2">
             <h2 className="text-xs font-medium tracking-wide text-muted uppercase">{title}</h2>
-            <div className="flex flex-col rounded-2xl bg-white px-4">
+            <div className="flex flex-col rounded-2xl bg-card px-4">
               {list.map((r) => (
                 <Row key={r.id} r={r} />
               ))}
@@ -120,7 +120,7 @@ export default async function RecurrentesPage() {
       {paused.length > 0 && (
         <section className="flex flex-col gap-2">
           <h2 className="text-xs font-medium tracking-wide text-muted uppercase">Pausados</h2>
-          <div className="flex flex-col rounded-2xl bg-white px-4">
+          <div className="flex flex-col rounded-2xl bg-card px-4">
             {paused.map((r) => (
               <Row key={r.id} r={r} />
             ))}

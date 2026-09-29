@@ -161,7 +161,7 @@ export function CargarForm({
                   onClick={() => changeTipo(t.value)}
                   className={`h-10 rounded-[9px] text-sm ${
                     tipo === t.value
-                      ? "bg-white font-semibold text-foreground"
+                      ? "bg-segment-on font-semibold text-foreground shadow-sm"
                       : "text-muted"
                   }`}
                 >
@@ -210,7 +210,7 @@ export function CargarForm({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Opcional"
-              className="h-12 rounded-xl border border-line bg-white px-3.5 text-base outline-none focus:border-accent"
+              className="h-12 rounded-xl border border-line bg-card px-3.5 text-base outline-none focus:border-accent"
             />
           </div>
 
@@ -249,7 +249,7 @@ export function CargarForm({
               {flexLeft && (
                 <p className="text-sm text-muted">
                   Te quedan{" "}
-                  <span className={flexLeft.left < 0 ? "text-red-700" : "text-accent"}>
+                  <span className={flexLeft.left < 0 ? "text-negative" : "text-accent"}>
                     {formatEUR(flexLeft.left)}
                   </span>{" "}
                   de {formatEUR(flexLeft.limit)} hasta el 19
@@ -258,7 +258,7 @@ export function CargarForm({
             </div>
           )}
 
-          <div className="flex flex-col rounded-2xl bg-white px-4">
+          <div className="flex flex-col rounded-2xl bg-card px-4">
             <div className="relative flex h-12 items-center justify-between border-b border-line-soft">
               <label htmlFor="date" className="text-[15px]">
                 Fecha
@@ -341,7 +341,7 @@ export function CargarForm({
           )}
 
           {state?.error && (
-            <p role="alert" className="text-sm text-red-700">
+            <p role="alert" className="text-sm text-negative">
               {state.error}
             </p>
           )}
@@ -350,7 +350,7 @@ export function CargarForm({
         <div className="mt-auto px-5 pt-4 pb-4">
           <button
             disabled={pending}
-            className="h-[52px] w-full rounded-[14px] bg-accent text-base font-semibold text-white disabled:opacity-50"
+            className="h-[52px] w-full rounded-[14px] bg-accent text-base font-semibold text-on-accent disabled:opacity-50"
           >
             {pending ? "Guardando…" : "Guardar"}
           </button>

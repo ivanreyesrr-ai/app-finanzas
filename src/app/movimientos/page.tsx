@@ -130,7 +130,7 @@ export default async function MovimientosPage({
             defaultValue={query}
             placeholder="Buscar por nombre o categoría"
             aria-label="Buscar"
-            className="h-11 w-full rounded-xl border border-line bg-white px-3.5 text-base outline-none focus:border-accent"
+            className="h-11 w-full rounded-xl border border-line bg-card px-3.5 text-base outline-none focus:border-accent"
           />
         </form>
         <div className="flex flex-wrap gap-2">
@@ -141,8 +141,8 @@ export default async function MovimientosPage({
               aria-current={filter === f.value ? "true" : undefined}
               className={`flex h-9 items-center rounded-full border px-3.5 text-sm ${
                 filter === f.value
-                  ? "border-foreground bg-foreground text-white"
-                  : "border-line bg-white text-foreground"
+                  ? "border-accent bg-accent text-on-accent"
+                  : "border-line bg-card text-foreground"
               }`}
             >
               {f.label}
@@ -169,7 +169,7 @@ export default async function MovimientosPage({
               </h2>
               {d.total !== 0 && <span>{money(Math.abs(d.total), hidden, d.total > 0 ? "+" : "−")}</span>}
             </div>
-            <div className="flex flex-col rounded-2xl bg-white px-4">
+            <div className="flex flex-col rounded-2xl bg-card px-4">
               {d.items.map((t) => (
                 <Row key={t.id} t={t} />
               ))}
@@ -187,7 +187,7 @@ export default async function MovimientosPage({
               Gastado del {formatShortDate(`${addMonths(month, -2)}-20`)} al{" "}
               {formatShortDate(`${addMonths(month, -1)}-19`)}
             </p>
-            <div className="flex flex-col rounded-2xl bg-white px-4">
+            <div className="flex flex-col rounded-2xl bg-card px-4">
               {flex.items.map((t) => (
                 <Row key={t.id} t={t} showDate />
               ))}

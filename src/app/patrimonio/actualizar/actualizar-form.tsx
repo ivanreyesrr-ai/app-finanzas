@@ -95,7 +95,7 @@ export function ActualizarForm({
           )}
         </div>
 
-        <div className="flex flex-col rounded-2xl bg-white px-4">
+        <div className="flex flex-col rounded-2xl bg-card px-4">
           <div className="relative flex h-12 items-center justify-between">
             <label htmlFor="date" className="text-[15px]">
               Fecha del saldo
@@ -122,7 +122,7 @@ export function ActualizarForm({
         </p>
 
         {state?.error && (
-          <p role="alert" className="text-sm text-red-700">
+          <p role="alert" className="text-sm text-negative">
             {state.error}
           </p>
         )}
@@ -131,7 +131,7 @@ export function ActualizarForm({
       <div className="mt-auto px-5 pt-4 pb-[max(env(safe-area-inset-bottom),20px)]">
         <button
           disabled={pending || !accountId}
-          className="h-[52px] w-full rounded-[14px] bg-accent text-base font-semibold text-white disabled:opacity-50"
+          className="h-[52px] w-full rounded-[14px] bg-accent text-base font-semibold text-on-accent disabled:opacity-50"
         >
           {pending ? "Guardando…" : "Guardar"}
         </button>

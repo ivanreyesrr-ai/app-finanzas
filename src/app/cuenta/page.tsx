@@ -46,7 +46,7 @@ export default async function CuentaPage({ searchParams }: PageProps<"/cuenta">)
           </p>
         )}
 
-        <nav className="flex flex-col rounded-2xl bg-white px-4">
+        <nav className="flex flex-col rounded-2xl bg-card px-4">
           <Link
             href="/cuenta/contrasena"
             className="flex h-12 items-center justify-between text-[15px]"
@@ -59,7 +59,7 @@ export default async function CuentaPage({ searchParams }: PageProps<"/cuenta">)
         </nav>
 
         <form action={signOut}>
-          <button className="h-12 w-full rounded-[14px] border border-red-200 bg-white text-[15px] text-red-700">
+          <button className="h-12 w-full rounded-[14px] border border-negative/30 bg-card text-[15px] text-negative">
             Cerrar sesión
           </button>
         </form>

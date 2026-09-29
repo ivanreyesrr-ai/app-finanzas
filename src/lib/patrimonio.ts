@@ -21,7 +21,7 @@ export type PatrimonioRow = {
   manual: boolean; // se puede "Actualizar saldo"
 };
 
-const COLORS = ["#1F5E4A", "#7FA38F", "#C9962E", "#1A1A17", "#8A4B2A", "#2B4C7E"];
+const COLORS = ["#1F5E4A", "#7FA38F", "#C9962E", "#8E8E93", "#8A4B2A", "#2B4C7E"];
 
 export function accountRole(a: Pick<Account, "type" | "currency">) {
   switch (a.type) {

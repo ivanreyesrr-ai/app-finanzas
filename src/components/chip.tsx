@@ -12,10 +12,8 @@ export function Chip({
       type="button"
       aria-pressed={on}
       onClick={onClick}
-      className={`h-9 rounded-full border px-3.5 text-sm ${
-        on
-          ? "border-foreground bg-foreground text-white"
-          : "border-line bg-white text-foreground"
+      className={`h-9 rounded-full px-3.5 text-[15px] ${
+        on ? "bg-accent text-on-accent" : "bg-card text-foreground"
       }`}
     >
       {children}

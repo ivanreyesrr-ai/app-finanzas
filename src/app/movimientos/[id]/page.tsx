@@ -45,7 +45,7 @@ export default async function EditarMovimiento({
           {t.type === "gasto" && (
             <Link
               href={`/movimientos/${t.id}/devolucion`}
-              className="flex h-12 items-center justify-center rounded-[14px] border border-line bg-white text-[15px]"
+              className="flex h-12 items-center justify-center rounded-[14px] border border-line bg-card text-[15px]"
             >
               Registrar devolución
             </Link>

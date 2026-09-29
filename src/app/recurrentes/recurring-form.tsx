@@ -58,7 +58,7 @@ function Segmented<T extends string>({
           aria-checked={value === o.value}
           onClick={() => onChange(o.value)}
           className={`h-10 rounded-[9px] text-sm ${
-            value === o.value ? "bg-white font-semibold text-foreground" : "text-muted"
+            value === o.value ? "bg-segment-on font-semibold text-foreground shadow-sm" : "text-muted"
           }`}
         >
           {o.label}
@@ -188,7 +188,7 @@ export function RecurringForm({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Ej. Alquiler, Digi, Salario"
-              className="h-12 rounded-xl border border-line bg-white px-3.5 text-base outline-none focus:border-accent"
+              className="h-12 rounded-xl border border-line bg-card px-3.5 text-base outline-none focus:border-accent"
             />
           </div>
 
@@ -236,7 +236,7 @@ export function RecurringForm({
             <p className="text-sm text-muted">{scheduleText(frequency, startDate)}</p>
           </div>
 
-          <div className="flex flex-col rounded-2xl bg-white px-4">
+          <div className="flex flex-col rounded-2xl bg-card px-4">
             <div className={row}>
               <label htmlFor="start_date" className="text-[15px]">
                 Primera fecha
@@ -325,7 +325,7 @@ export function RecurringForm({
           )}
 
           {state?.error && (
-            <p role="alert" className="text-sm text-red-700">
+            <p role="alert" className="text-sm text-negative">
               {state.error}
             </p>
           )}
@@ -334,7 +334,7 @@ export function RecurringForm({
         <div className="mt-auto px-5 pt-4 pb-4">
           <button
             disabled={pending}
-            className="h-[52px] w-full rounded-[14px] bg-accent text-base font-semibold text-white disabled:opacity-50"
+            className="h-[52px] w-full rounded-[14px] bg-accent text-base font-semibold text-on-accent disabled:opacity-50"
           >
             {pending ? "Guardando…" : "Guardar"}
           </button>
@@ -345,7 +345,7 @@ export function RecurringForm({
         <div className="grid grid-cols-2 gap-3 px-5 pb-[max(env(safe-area-inset-bottom),20px)]">
           <form action={toggleRecurring}>
             <input type="hidden" name="id" value={initial.id} />
-            <button className="h-12 w-full rounded-[14px] border border-line bg-white text-[15px]">
+            <button className="h-12 w-full rounded-[14px] border border-line bg-card text-[15px]">
               {initial.active ? "Pausar" : "Reanudar"}
             </button>
           </form>
@@ -357,7 +357,7 @@ export function RecurringForm({
             }}
           >
             <input type="hidden" name="id" value={initial.id} />
-            <button className="h-12 w-full rounded-[14px] border border-red-200 bg-white text-[15px] text-red-700">
+            <button className="h-12 w-full rounded-[14px] border border-negative/30 bg-card text-[15px] text-negative">
               Borrar
             </button>
           </form>

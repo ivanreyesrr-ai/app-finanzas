@@ -11,7 +11,7 @@ export function DeleteButton({ id, label }: { id: string; label: string }) {
       }}
     >
       <input type="hidden" name="id" value={id} />
-      <button className="h-12 w-full rounded-[14px] border border-red-200 bg-white text-[15px] text-red-700">
+      <button className="h-12 w-full rounded-[14px] border border-negative/30 bg-card text-[15px] text-negative">
         Borrar
       </button>
     </form>
