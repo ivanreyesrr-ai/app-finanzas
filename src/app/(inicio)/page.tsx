@@ -91,8 +91,8 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
 
   const isCurrent = month === today.slice(0, 7);
   const isPast = month < today.slice(0, 7);
-  // Gasto diario disponible: resultado del mes (ingresos − gastos − pendientes)
-  // repartido entre los días que quedan, hoy incluido.
+  // Gasto diario disponible: lo que queda a fin de mes (ya descontados los
+  // pendientes) repartido entre los días que faltan, hoy incluido.
   const diasRestantes = Number(lastDay(month).slice(8, 10)) - Number(today.slice(8, 10)) + 1;
   const maxCat = Math.max(...s.categories.map((c) => c.paid + c.pending), 1);
   const totalCat = s.categories.reduce((sum, c) => sum + c.paid + c.pending, 0);
@@ -149,19 +149,16 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
         </div>
         {isCurrent && (
           <div className="mt-2 border-t-[0.5px] border-line pt-2.5 text-[15px]">
-            {s.resultado >= 0 ? (
+            {s.queda > 0 ? (
               <>
-                <span className="font-semibold">≈ {m(s.resultado / diasRestantes)}/día</span>
+                <span className="font-semibold">≈ {m(s.queda / diasRestantes)}/día</span>
                 <span className="text-muted">
                   {" "}
-                  durante {diasRestantes} {diasRestantes === 1 ? "día" : "días"} para cerrar el mes en cero
+                  durante {diasRestantes} {diasRestantes === 1 ? "día" : "días"} hasta fin de mes
                 </span>
               </>
             ) : (
-              <span className="text-negative">
-                Este mes ya gastaste más de lo que entra
-                {!hidden && ` (${m(Math.abs(s.resultado), "−")})`}
-              </span>
+              <span className="text-negative">Sin margen: no hay más para gastar este mes</span>
             )}
           </div>
         )}
