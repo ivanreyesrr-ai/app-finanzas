@@ -97,6 +97,11 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
   const maxCat = Math.max(...s.categories.map((c) => c.paid + c.pending), 1);
   const totalCat = s.categories.reduce((sum, c) => sum + c.paid + c.pending, 0);
   const pct = (n: number) => `${Math.max(0, (n / maxCat) * 100).toFixed(2)}%`;
+  // Peso de cada categoría sobre el total gastado del mes.
+  const share = (n: number) => {
+    const p = totalCat > 0 ? (n / totalCat) * 100 : 0;
+    return p > 0 && p < 1 ? "<1 %" : `${Math.round(p)} %`;
+  };
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col pb-32 tabular-nums">
@@ -208,7 +213,10 @@ export default async function InicioMes({ searchParams }: PageProps<"/">) {
             >
               <div className="flex items-baseline justify-between gap-2 text-[17px]">
                 <div>{c.name}</div>
-                <div className="text-muted">{m(c.paid + c.pending)}</div>
+                <div className="text-muted">
+                  {m(c.paid + c.pending)}{" "}
+                  <span className="text-[15px]">({share(c.paid + c.pending)})</span>
+                </div>
               </div>
               <div className="flex h-[5px] overflow-hidden rounded-full bg-track">
                 <div className="bg-accent" style={{ width: pct(c.paid) }} />
